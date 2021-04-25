@@ -10,6 +10,6 @@ public interface Analysis {
         return !getIssues().isEmpty();
     }
 
-    List<Issue> getIssues();
+    List<? extends Issue> getIssues();
 
 }

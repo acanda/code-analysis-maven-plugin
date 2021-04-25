@@ -1,5 +1,7 @@
 package ch.acanda.maven.coan;
 
+import ch.acanda.maven.coan.checkstyle.CheckstyleAnalyser;
+import ch.acanda.maven.coan.checkstyle.CheckstyleConfig;
 import ch.acanda.maven.coan.pmd.PmdAnalyser;
 import ch.acanda.maven.coan.pmd.PmdConfig;
 import org.apache.maven.plugin.AbstractMojo;
@@ -19,9 +21,10 @@ import static java.util.Locale.ENGLISH;
 @Mojo(name = "analyse", defaultPhase = LifecyclePhase.VERIFY)
 public class AnalyseMojo extends AbstractMojo {
 
+    private static final String DEFAULT_FAIL_ON_ISSUES = "true";
     private static final String DEFAULT_TARGET_PATH = "${project.build.directory}/code-analysis";
     private static final String DEFAULT_PMD_CONFIG_PATH = "config/pmd.xml";
-    private static final String DEFAULT_FAIL_ON_ISSUES = "true";
+    private static final String DEFAULT_CHECKSTYLE_CONFIG_PATH = "config/checkstyle.xml";
 
     @Parameter(defaultValue = "${project}")
     private MavenProject project;
@@ -29,18 +32,24 @@ public class AnalyseMojo extends AbstractMojo {
     @Parameter(property = "coan.failOnIssues", required = true, defaultValue = DEFAULT_FAIL_ON_ISSUES)
     private boolean failOnIssues;
 
+    @Parameter(property = "coan.targetPath", required = true, defaultValue = DEFAULT_TARGET_PATH)
+    private String targetPath;
+
     @Parameter(property = "coan.pmd.configPath", required = true, defaultValue = DEFAULT_PMD_CONFIG_PATH)
     private String pmdConfigPath;
 
-    @Parameter(property = "coan.targetPath", required = true, defaultValue = DEFAULT_TARGET_PATH)
-    private String targetPath;
+    @Parameter(property = "coan.checkstyle.configPath", required = true, defaultValue = DEFAULT_CHECKSTYLE_CONFIG_PATH)
+    private String checkstyleConfigPath;
 
     @Override
     public void execute() throws MojoFailureException {
         final PmdAnalyser pmdAnalyser = new PmdAnalyser(assemblePmdConfig());
         final Analysis pmdAnalysis = pmdAnalyser.analyse();
         report(pmdAnalysis);
-        if (failOnIssues && pmdAnalysis.foundIssues()) {
+        final CheckstyleAnalyser checkstyleAnalyser = new CheckstyleAnalyser(assembleCheckstyleConfig());
+        final Analysis checkstyleAnalysis = checkstyleAnalyser.analyse();
+        report(checkstyleAnalysis);
+        if (failOnIssues && (pmdAnalysis.foundIssues() || checkstyleAnalysis.foundIssues())) {
             throw new MojoFailureException("Code analysis found " + numberOfToolIssues(pmdAnalysis) + ".");
         }
     }
@@ -54,9 +63,18 @@ public class AnalyseMojo extends AbstractMojo {
                 .build();
     }
 
+    private CheckstyleConfig assembleCheckstyleConfig() {
+        return CheckstyleConfig.builder()
+                .project(project)
+                .log(getLog())
+                .configPath(checkstyleConfigPath)
+                .targetPath(targetPath)
+                .build();
+    }
+
     private void report(final Analysis analysis) {
         if (analysis.foundIssues()) {
-            final List<Issue> issues = analysis.getIssues();
+            final List<? extends Issue> issues = analysis.getIssues();
             final var summaryTemplate = "%s found %s:";
             getLog().warn(String.format(ENGLISH, summaryTemplate, analysis.getToolName(), numberOfIssues(analysis)));
             issues.stream()
