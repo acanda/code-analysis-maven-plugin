@@ -9,8 +9,6 @@ import net.sourceforge.pmd.Rule;
 import net.sourceforge.pmd.RuleSet;
 import net.sourceforge.pmd.RuleSetLoader;
 import net.sourceforge.pmd.RuleViolation;
-import net.sourceforge.pmd.renderers.Renderer;
-import net.sourceforge.pmd.renderers.SummaryHTMLRenderer;
 import net.sourceforge.pmd.util.datasource.DataSource;
 import net.sourceforge.pmd.util.datasource.FileDataSource;
 import org.apache.maven.model.Build;
@@ -20,7 +18,6 @@ import org.apache.maven.project.MavenProject;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -33,7 +30,6 @@ import java.util.stream.Stream;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 
-@SuppressWarnings("PMD.ExcessiveImports")
 public class PmdAnalyser {
 
     private final PmdConfig config;
@@ -61,17 +57,9 @@ public class PmdAnalyser {
             final String names = files.stream().map(ds -> ds.getNiceFileName(false, null)).collect(joining("\n  "));
             log.debug("Source files:\n  " + names);
         }
-        try {
-            final Renderer htmlRenderer = createHtmlRenderer(targetPath);
-            htmlRenderer.start();
-            final Report report = PMD.processFiles(configuration, ruleSets, files, List.of(htmlRenderer));
-            htmlRenderer.end();
-            htmlRenderer.flush();
-            final List<RuleViolation> violations = report.getViolations();
-            return new PmdAnalysis(violations.stream().map(PmdIssue::new).collect(toList()));
-        } catch (final IOException e) {
-            throw new MojoFailureException("Failed to write report.", e);
-        }
+        final Report report = PMD.processFiles(configuration, ruleSets, files, List.of());
+        final List<RuleViolation> violations = report.getViolations();
+        return new PmdAnalysis(violations.stream().map(PmdIssue::new).collect(toList()));
     }
 
     private List<DataSource> getFiles() {
@@ -125,21 +113,6 @@ public class PmdAnalyser {
         final PMDConfiguration configuration = new PMDConfiguration();
         configuration.setAnalysisCacheLocation(targetPath.resolve("pmd.cache").toString());
         return configuration;
-    }
-
-    private Renderer createHtmlRenderer(final Path buildDir) throws MojoFailureException {
-        try {
-            Files.createDirectories(buildDir);
-        } catch (final IOException e) {
-            throw new MojoFailureException("Failed to create directory " + buildDir + ".", e);
-        }
-        try {
-            final SummaryHTMLRenderer renderer = new SummaryHTMLRenderer();
-            renderer.setWriter(Files.newBufferedWriter(buildDir.resolve("pmd-report.html"), StandardCharsets.UTF_8));
-            return renderer;
-        } catch (final IOException e) {
-            throw new MojoFailureException("Failed to create report.", e);
-        }
     }
 
 }

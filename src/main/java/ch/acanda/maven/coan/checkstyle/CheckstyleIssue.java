@@ -23,6 +23,11 @@ public class CheckstyleIssue implements Issue {
     }
 
     @Override
+    public int getColumn() {
+        return event.getColumn();
+    }
+
+    @Override
     public String getName() {
         final String sourceName = event.getSourceName();
         final int pos = sourceName.lastIndexOf('.');
@@ -32,6 +37,22 @@ public class CheckstyleIssue implements Issue {
     @Override
     public String getDescription() {
         return event.getMessage();
+    }
+
+    @Override
+    public Severity getSeverity() {
+        switch (event.getSeverityLevel()) {
+            case ERROR:
+                return Severity.HIGHEST;
+            case WARNING:
+                return Severity.HIGH;
+            case INFO:
+                return Severity.MEDIUM;
+            case IGNORE:
+                return Severity.IGNORE;
+            default:
+                throw new IllegalStateException("Unexpected Checkstyle severity level: " + event.getSeverityLevel());
+        }
     }
 
 }

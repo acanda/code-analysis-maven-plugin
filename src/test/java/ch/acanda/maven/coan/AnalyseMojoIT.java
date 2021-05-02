@@ -17,8 +17,7 @@ public class AnalyseMojoIT {
     @MavenGoal("verify")
     public void analyseSucceedsWithoutIssues(final MavenExecutionResult project) {
         final MavenProjectResultAssert target = assertThat(project).isSuccessful().project().hasTarget();
-        target.withFile("code-analysis/pmd-report.html").exists();
-        target.withFile("code-analysis/checkstyle-report.html").exists();
+        target.withFile("code-analysis/report.html").exists();
         assertThat(project).out().info().contains("PMD did not find any issues.");
         assertThat(project).out().info().contains("Checkstyle did not find any issues.");
     }
@@ -28,8 +27,7 @@ public class AnalyseMojoIT {
     public void analyseFailsWithIssues(final MavenExecutionResult project) {
         final MavenProjectResultAssert target = assertThat(project).isFailure()
                 .project().hasTarget();
-        target.withFile("code-analysis/pmd-report.html").exists();
-        target.withFile("code-analysis/checkstyle-report.html").exists();
+        target.withFile("code-analysis/report.html").exists();
         assertThat(project).out().warn().containsSubsequence(
                 "PMD found 1 issue:",
                 "src" + File.separator + "main" + File.separator + "java" + File.separator + "Hello.java",
@@ -38,8 +36,8 @@ public class AnalyseMojoIT {
         assertThat(project).out().warn().containsSubsequence(
                 "Checkstyle found 2 issues:",
                 "src" + File.separator + "main" + File.separator + "java" + File.separator + "Hello.java",
-                " [LineLengthCheck] Zeile ist 51 Zeichen lang (Obergrenze ist 35). (Hello.java:2)",
-                " [LineLengthCheck] Zeile ist 36 Zeichen lang (Obergrenze ist 35). (Hello.java:3)"
+                " [LineLengthCheck] Line is longer than 35 characters (found 51). (Hello.java:2)",
+                " [LineLengthCheck] Line is longer than 35 characters (found 36). (Hello.java:3)"
         );
     }
 
