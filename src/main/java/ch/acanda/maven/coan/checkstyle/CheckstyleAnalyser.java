@@ -55,9 +55,6 @@ public class CheckstyleAnalyser {
             final RootModule rootModule = (RootModule) factory.createModule(configuration.getName());
             rootModule.setModuleClassLoader(Checker.class.getClassLoader());
             rootModule.configure(configuration);
-            final Path reportFile = Paths.get(config.getTargetPath()).resolve("checkstyle-report.html");
-            final String projectName = getProjectName(config.getProject());
-            rootModule.addListener(new HtmlLogger(reportFile, config.getProject().getBasedir().toPath(), projectName));
             final IssueCollector issueCollector = new IssueCollector();
             rootModule.addListener(issueCollector);
 
@@ -73,11 +70,6 @@ public class CheckstyleAnalyser {
         } catch (final CheckstyleException e) {
             throw new MojoFailureException("Failed to run Checkstyle.", e);
         }
-    }
-
-    private String getProjectName(final MavenProject project) {
-        final String name = project.getName();
-        return name == null ? project.getArtifactId() : name;
     }
 
     private Path getConfig(final MavenProject project, final List<Path> failed) throws MojoFailureException {

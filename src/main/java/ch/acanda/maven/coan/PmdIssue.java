@@ -22,6 +22,11 @@ public class PmdIssue implements Issue {
     }
 
     @Override
+    public int getColumn() {
+        return violation.getBeginColumn();
+    }
+
+    @Override
     public String getName() {
         return violation.getRule().getName();
     }
@@ -29,6 +34,24 @@ public class PmdIssue implements Issue {
     @Override
     public String getDescription() {
         return violation.getDescription();
+    }
+
+    @Override
+    public Severity getSeverity() {
+        switch (violation.getRule().getPriority()) {
+            case HIGH:
+                return Severity.HIGHEST;
+            case MEDIUM_HIGH:
+                return Severity.HIGH;
+            case MEDIUM:
+                return Severity.MEDIUM;
+            case MEDIUM_LOW:
+                return Severity.LOW;
+            case LOW:
+                return Severity.LOWEST;
+            default:
+                throw new IllegalStateException("Unexpected PMD rule priority: " + violation.getRule().getPriority());
+        }
     }
 
 }

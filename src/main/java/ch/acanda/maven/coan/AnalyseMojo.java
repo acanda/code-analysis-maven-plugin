@@ -4,6 +4,7 @@ import ch.acanda.maven.coan.checkstyle.CheckstyleAnalyser;
 import ch.acanda.maven.coan.checkstyle.CheckstyleConfig;
 import ch.acanda.maven.coan.pmd.PmdAnalyser;
 import ch.acanda.maven.coan.pmd.PmdConfig;
+import ch.acanda.maven.coan.report.HtmlReport;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -12,6 +13,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -49,9 +51,18 @@ public class AnalyseMojo extends AbstractMojo {
         final CheckstyleAnalyser checkstyleAnalyser = new CheckstyleAnalyser(assembleCheckstyleConfig());
         final Analysis checkstyleAnalysis = checkstyleAnalyser.analyse();
         report(checkstyleAnalysis);
+        createHtmlReport(pmdAnalysis, checkstyleAnalysis);
         if (failOnIssues && (pmdAnalysis.foundIssues() || checkstyleAnalysis.foundIssues())) {
             throw new MojoFailureException("Code analysis found " + numberOfToolIssues(pmdAnalysis) + ".");
         }
+    }
+
+    private void createHtmlReport(final Analysis... analyses) throws MojoFailureException {
+        final HtmlReport report = new HtmlReport(project.getArtifact(), project.getBasedir().toPath(), analyses);
+        final Path reportFile = Paths.get(targetPath).resolve("report.html");
+        getLog().info("Start writing report to " + reportFile);
+        report.writeTo(reportFile);
+        getLog().info("Finished writing report to " + reportFile);
     }
 
     private PmdConfig assemblePmdConfig() {
