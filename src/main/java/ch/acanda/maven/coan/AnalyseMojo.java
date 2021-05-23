@@ -15,10 +15,16 @@ import org.apache.maven.project.MavenProject;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.Comparator.comparing;
 import static java.util.Locale.ENGLISH;
+import static java.util.stream.Collectors.joining;
 
 @Mojo(name = "analyse", defaultPhase = LifecyclePhase.VERIFY)
 public class AnalyseMojo extends AbstractMojo {
@@ -44,25 +50,42 @@ public class AnalyseMojo extends AbstractMojo {
     private String checkstyleConfigPath;
 
     @Override
+    @SuppressWarnings("PMD.PreserveStackTrace")
     public void execute() throws MojoFailureException {
-        final PmdAnalyser pmdAnalyser = new PmdAnalyser(assemblePmdConfig());
-        final Analysis pmdAnalysis = pmdAnalyser.analyse();
-        report(pmdAnalysis);
-        final CheckstyleAnalyser checkstyleAnalyser = new CheckstyleAnalyser(assembleCheckstyleConfig());
-        final Analysis checkstyleAnalysis = checkstyleAnalyser.analyse();
-        report(checkstyleAnalysis);
-        createHtmlReport(pmdAnalysis, checkstyleAnalysis);
-        if (failOnIssues && (pmdAnalysis.foundIssues() || checkstyleAnalysis.foundIssues())) {
-            throw new MojoFailureException("Code analysis found " + numberOfToolIssues(pmdAnalysis) + ".");
+        final ExecutorService executorService = Executors.newFixedThreadPool(2);
+        try {
+            final PmdAnalyser pmdAnalyser = new PmdAnalyser(assemblePmdConfig());
+            final CheckstyleAnalyser checkstyleAnalyser = new CheckstyleAnalyser(assembleCheckstyleConfig());
+
+            final Future<Analysis> pmdFuture = executorService.submit(pmdAnalyser::analyse);
+            final Future<Analysis> checkstyleFuture = executorService.submit(checkstyleAnalyser::analyse);
+
+            final Analysis pmdAnalysis = pmdFuture.get();
+            final Analysis checkstyleAnalysis = checkstyleFuture.get();
+
+            report(pmdAnalysis);
+            report(checkstyleAnalysis);
+            createHtmlReport(pmdAnalysis, checkstyleAnalysis);
+            if (failOnIssues && (pmdAnalysis.foundIssues() || checkstyleAnalysis.foundIssues())) {
+                final String numberOfToolIssues = Stream.of(pmdAnalysis, checkstyleAnalysis)
+                        .filter(Analysis::foundIssues)
+                        .map(this::numberOfToolIssues)
+                        .collect(joining(" and "));
+                throw new MojoFailureException("Code analysis found " + numberOfToolIssues + ".");
+            }
+        } catch (final ExecutionException e) {
+            throw new MojoFailureException(e.getMessage(), e.getCause());
+        } catch (final InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new MojoFailureException(e.getMessage(), e);
         }
     }
 
     private void createHtmlReport(final Analysis... analyses) throws MojoFailureException {
         final HtmlReport report = new HtmlReport(project.getArtifact(), project.getBasedir().toPath(), analyses);
         final Path reportFile = Paths.get(targetPath).resolve("report.html");
-        getLog().info("Start writing report to " + reportFile);
         report.writeTo(reportFile);
-        getLog().info("Finished writing report to " + reportFile);
+        getLog().info("HTML report available at " + reportFile);
     }
 
     private PmdConfig assemblePmdConfig() {
