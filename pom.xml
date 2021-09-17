@@ -22,6 +22,15 @@
         <itf.version>0.11.0</itf.version>
         <checkstyle.version>9.0</checkstyle.version>
         <pmd.version>6.38.0</pmd.version>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <sonar.organization>spring-banner-plugin</sonar.organization>
+        <sonar.projectKey>acanda_code-analysis-maven-plugin</sonar.projectKey>
+        <sonar.moduleKey>${project.artifactId}</sonar.moduleKey>
+        <sonar.java.source>${java.version}</sonar.java.source>
+        <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+        <sonar.coverage.jacoco.xmlReportPaths>
+            ${project.build.directory}/site/jacoco/jacoco.xml
+        </sonar.coverage.jacoco.xmlReportPaths>
     </properties>
 
     <dependencies>
@@ -348,6 +357,38 @@
                 </plugins>
             </build>
         </profile>
+
+        <profile>
+            <id>coverage</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        <version>0.8.7</version>
+                        <executions>
+                            <execution>
+                                <id>run-jacoco</id>
+                                <goals>
+                                    <goal>prepare-agent</goal>
+                                    <goal>report</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <excludes>
+                                <exclude>**/HelpMojo.class</exclude>
+                            </excludes>
+                            <formats>
+                                <format>XML</format>
+                            </formats>
+                        </configuration>
+                    </plugin>
+
+                </plugins>
+            </build>
+        </profile>
+
     </profiles>
 
 </project>
