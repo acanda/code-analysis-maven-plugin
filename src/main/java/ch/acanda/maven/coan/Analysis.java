@@ -1,5 +1,7 @@
 package ch.acanda.maven.coan;
 
+import org.apache.maven.project.MavenProject;
+
 import java.util.List;
 
 public interface Analysis {
@@ -11,5 +13,7 @@ public interface Analysis {
     }
 
     List<? extends Issue> getIssues();
+
+    MavenProject getProject();
 
 }

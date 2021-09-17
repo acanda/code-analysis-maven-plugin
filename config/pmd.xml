@@ -67,6 +67,7 @@
         <exclude name="AvoidLiteralsInIfCondition"/>
         <exclude name="BeanMembersShouldSerialize"/>
         <exclude name="EmptyCatchBlock"/>
+        <exclude name="MissingSerialVersionUID"/>
         <exclude name="ProperLogger"/>
         <exclude name="UseProperClassLoader"/>
     </rule>

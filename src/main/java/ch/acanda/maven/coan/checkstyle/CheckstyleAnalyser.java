@@ -45,13 +45,13 @@ public class CheckstyleAnalyser {
             log.debug("Found Checkstyle configPath at " + configPath + ".");
 
             final Configuration configuration = ConfigurationLoader.loadConfiguration(
-                    configPath.toString(),
-                    new PropertiesExpander(new Properties()),
-                    ConfigurationLoader.IgnoredModulesOptions.OMIT,
-                    new ThreadModeSettings(1, 1));
+                configPath.toString(),
+                new PropertiesExpander(new Properties()),
+                ConfigurationLoader.IgnoredModulesOptions.OMIT,
+                new ThreadModeSettings(1, 1));
 
             final ModuleFactory factory = new PackageObjectFactory(
-                    Checker.class.getPackage().getName(), Checker.class.getClassLoader());
+                Checker.class.getPackage().getName(), Checker.class.getClassLoader());
             final RootModule rootModule = (RootModule) factory.createModule(configuration.getName());
             rootModule.setModuleClassLoader(Checker.class.getClassLoader());
             rootModule.configure(configuration);
@@ -65,7 +65,7 @@ public class CheckstyleAnalyser {
             }
             rootModule.process(files);
 
-            return new CheckstyleAnalysis(issueCollector.getIssues());
+            return new CheckstyleAnalysis(config.getProject(), issueCollector.getIssues());
 
         } catch (final CheckstyleException e) {
             throw new MojoFailureException("Failed to run Checkstyle.", e);
@@ -94,15 +94,15 @@ public class CheckstyleAnalyser {
         final Path sources = Paths.get(build.getSourceDirectory());
         final Path testSources = Paths.get(build.getTestSourceDirectory());
         return Stream.of(sources, testSources)
-                .filter(Files::exists)
-                .flatMap(this::getFiles)
-                .filter(Files::isRegularFile)
-                .filter(path -> path.getFileName().toString().endsWith(".java"))
-                .map(Path::toFile)
-                .collect(toList());
+            .filter(Files::exists)
+            .flatMap(CheckstyleAnalyser::getFiles)
+            .filter(Files::isRegularFile)
+            .filter(path -> path.getFileName().toString().endsWith(".java"))
+            .map(Path::toFile)
+            .collect(toList());
     }
 
-    private Stream<Path> getFiles(final Path directory) {
+    private static Stream<Path> getFiles(final Path directory) {
         try {
             return Files.walk(directory);
         } catch (final IOException e) {
