@@ -40,7 +40,11 @@ public class PmdAnalyser {
         log = config.getLog();
     }
 
+    @SuppressWarnings("java:S4792" /* False positive */)
     public Analysis analyse() throws MojoFailureException {
+        // This triggers a false positive in Sonar (java:S4792).
+        // We disable the logger for PMD because we log the PMD issues in a
+        // different format that is consistent across all analysers.
         Logger.getLogger("net.sourceforge.pmd").setLevel(Level.OFF);
 
         final Path configPath = getConfig(config.getProject(), new ArrayList<>());

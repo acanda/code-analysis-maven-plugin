@@ -74,14 +74,16 @@ public class PmdReportMojo extends AbstractMojo {
         }
     }
 
+    // False positive: the streams created by Files.walk(...) are closed by the stream of Stream.concat(...).
+    @SuppressWarnings("java:S2095")
     private List<DataSource> getFiles() throws MojoFailureException {
         final Path sources = Paths.get(project.getBuild().getSourceDirectory());
         final Path testSources = Paths.get(project.getBuild().getTestSourceDirectory());
         try {
             return Stream.concat(Files.walk(sources), Files.walk(testSources))
-                    .filter(Files::isRegularFile)
-                    .map(path -> new FileDataSource(path.toFile()))
-                    .collect(Collectors.toList());
+                .filter(Files::isRegularFile)
+                .map(path -> new FileDataSource(path.toFile()))
+                .collect(Collectors.toList());
         } catch (final IOException e) {
             throw new MojoFailureException("Failed to collect source files.", e);
         }
@@ -104,41 +106,28 @@ public class PmdReportMojo extends AbstractMojo {
         throw new MojoFailureException("Unable to find PMD configuration.");
     }
 
-    private List<RuleSet> loadRuleSets(final Path config) {
+    private static List<RuleSet> loadRuleSets(final Path config) {
         final RuleSetLoader loader = new RuleSetLoader();
         loader.enableCompatibility(false);
         return List.of(loader.loadFromResource(config.toString()));
     }
 
-    private Stream<String> getRules(final List<RuleSet> ruleSets) {
+    private static Stream<String> getRules(final List<RuleSet> ruleSets) {
         return ruleSets.stream().flatMap(rs -> rs.getRules().stream()).map(Rule::getName).sorted();
     }
 
-    private PMDConfiguration createPmdConfiguration(final Path buildDir) throws MojoFailureException {
+    private static PMDConfiguration createPmdConfiguration(final Path buildDir) throws MojoFailureException {
         final PMDConfiguration configuration = new PMDConfiguration();
         configuration.setAnalysisCacheLocation(buildDir.resolve("pmd.cache").toString());
         return configuration;
-//        return new PMDConfiguration();
     }
 
-    private Renderer createHtmlRenderer(final Path buildDir) throws MojoFailureException {
+    private static Renderer createHtmlRenderer(final Path buildDir) throws MojoFailureException {
         try {
             Files.createDirectories(buildDir);
         } catch (final IOException e) {
             throw new MojoFailureException("Failed to create directory " + buildDir + ".", e);
         }
-//        final YAHTMLRenderer renderer = new YAHTMLRenderer();
-//        renderer.setProperty(YAHTMLRenderer.OUTPUT_DIR, buildDir.toString());
-//        renderer.setWriter(new OutputStreamWriter(System.out));
-//        return renderer;
-
-//        try {
-//            final SummaryHTMLRenderer renderer = new SummaryHTMLRenderer();
-//            renderer.setWriter(Files.newBufferedWriter(buildDir.resolve("pmd-report.html"), StandardCharsets.UTF_8));
-//            return renderer;
-//        } catch (final IOException e) {
-//            throw new MojoFailureException("Failed to create report.", e);
-//        }
 
         try {
             final XMLRenderer renderer = new XMLRenderer();
