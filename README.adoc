@@ -1,0 +1,132 @@
+= Coan - Code Analysis Maven Plugin
+:plugin-version: 0.1.0-SNAPSHOT
+:idprefix:
+:idseparator: -
+
+Coan is a code analysis Maven plugin that runs Checkstyle and PMD and generates a single page HTML report.
+You can either generate an individual report for each module or an aggregated report for all modules in a Maven project.
+It also logs the issues it finds to the console with links that are clickable and open the respective file in IntelliJ IDEA.
+
+
+== Usage
+
+=== Analyse a single Maven project or module
+
+You can create a report for a single Maven project or module with the goal `analyse`.
+If you put the following configuration into the parent pom of a multi-module project, then plugin will generate a separate report for each module.
+
+[source,xml,subs="attributes+"]
+----
+<build>
+    <plugins>
+        <plugin>
+            <groupId>ch.acanda.maven</groupId>
+            <artifactId>code-analysis-maven-plugin</artifactId>
+            <version>{plugin-version}</version>
+            <executions>
+                <execution>
+                    <id>analyse-code</id>
+                    <phase>verify</phase> <!--1-->
+                    <goals>
+                        <goal>analyse</goal>
+                    </goals>
+                </execution>
+            </executions>
+            <configuration> <!--2-->
+                <failOnIssues>true</failOnIssues>
+                <targetPath>${project.build.directory}/code-analysis</targetPath>
+                <pmdConfigPath>config/pmd.xml</pmdConfigPath>
+                <checkstyleConfigPath>config/checkstyle.xml</checkstyleConfigPath>
+            </configuration>
+        </plugin>
+    </plugins>
+</build>
+----
+
+<1> The default phase is `verify`.
+This can be omitted unless you want to run the plugin in another phase.
+<2> All configuration parameters are optional.
+The values in this example are the default values.
+
+=== Aggregated reports for multi-module projects
+
+You can create an aggregated report for a multi-module Maven project with the goal `aggregate`.
+The goal `aggregate` is not bound to a phase by default as this goal is not meant to be invoked as part of a build but individually with `mvn ch.acanda.maven:code-analysis-maven-plugin:aggregate`.
+If you need to change the configuration, then you can do this by either directly setting the properties on the CLI, e.g.
+
+[source,bash]
+----
+mvn ch.acanda.maven:code-analysis-maven-plugin:aggregate -Dcoan.failOnIssues=false
+----
+
+or by adding a build plugin configuration without a goal as shown below.
+
+[source,xml,subs="attributes+"]
+----
+<build>
+    <plugins>
+        <plugin>
+            <groupId>ch.acanda.maven</groupId>
+            <artifactId>code-analysis-maven-plugin</artifactId>
+            <version>{plugin-version}</version>
+            <configuration> <!--1-->
+                <failOnIssues>true</failOnIssues>
+                <targetPath>${project.build.directory}/code-analysis</targetPath>
+                <pmdConfigPath>config/pmd.xml</pmdConfigPath>
+                <checkstyleConfigPath>config/checkstyle.xml</checkstyleConfigPath>
+            </configuration>
+        </plugin>
+    </plugins>
+</build>
+----
+
+<1> All configuration parameters are optional.
+The values in this example are the default values.
+
+=== Configuration Parameters
+
+All parameters are optional.
+
+failOnIssues::
+Fails the build if any of the code analysers finds any issues.
+If you run Maven with `--fail-at-end`, then the build will not immediately fail but only at the end of the build. +
+Default value: `true` +
+Property: `coan.failOnIssues`
+
+targetPath::
+The working directory of the plugin.
+The final report `report.html` will be saved in this directory as well as some other temporary files. +
+Default value: `${project.build.directory}/code-analysis` +
+Property: `coan.targetPath`
+
+pmdConfigPath::
+TThe path to the PMD configuration file.
+This can be an absolute or relative path.
+If the path is relative, then the plugin tries to resolve it against the base path of the project or module that it is analysing.
+If it cannot resolve the path, then it recursively tries to resolve it against the parent projects.
+This allows you to have both a global configuration in a parent project and special configurations for selected modules. +
+Default value: `config/pmd.xml` +
+Property: `coan.pmd.configPath`
+
+pmdConfigPath::
+TThe path to the Checkstyle configuration file.
+This can be an absolute or relative path.
+If the path is relative, then the plugin tries to resolve it against the base path of the project or module that it is analysing.
+If it cannot resolve the path, then it recursively tries to resolve it against the parent projects.
+This allows you to have both a global configuration in a parent project and special configurations for selected modules. +
+Default value: `config/checkstyle.xml` +
+Property: `coan.checkstyle.configPath`
+
+== Build Status
+
+image:https://github.com/acanda/code-analysis-maven-plugin/actions/workflows/build.yaml/badge.svg["GitHub Actions Build Status",link="https://github.com/acanda/code-analysis-maven-plugin/actions/workflows/build.yaml"]
+image:https://sonarcloud.io/api/project_badges/measure?project=acanda_code-analysis-maven-plugin&metric=alert_status["Sonar Quality Gate Status",link="https://sonarcloud.io/dashboard?id=acanda_code-analysis-maven-plugin"]
+image:https://sonarcloud.io/api/project_badges/measure?project=acanda_code-analysis-maven-plugin&metric=security_rating["Sonar Security Rating",link="https://sonarcloud.io/component_measures?id=acanda_code-analysis-maven-plugin&metric=Security&view=list"]
+image:https://sonarcloud.io/api/project_badges/measure?project=acanda_code-analysis-maven-plugin&metric=reliability_rating["Sonar Reliability Rating",link="https://sonarcloud.io/component_measures?id=acanda_code-analysis-maven-plugin&metric=Reliability&view=list"]
+image:https://sonarcloud.io/api/project_badges/measure?project=acanda_code-analysis-maven-plugin&metric=sqale_rating["Sonar Maintainability Rating",link="https://sonarcloud.io/component_measures?id=acanda_code-analysis-maven-plugin&metric=Maintainability&view=list"]
+image:https://sonarcloud.io/api/project_badges/measure?project=acanda_code-analysis-maven-plugin&metric=vulnerabilities["Sonar Vulnerabilites",link="https://sonarcloud.io/project/issues?id=acanda_code-analysis-maven-plugin&resolved=false&types=VULNERABILITY"]
+image:https://sonarcloud.io/api/project_badges/measure?project=acanda_code-analysis-maven-plugin&metric=bugs["Sonar Bugs",link="https://sonarcloud.io/project/issues?id=acanda_code-analysis-maven-plugin&resolved=false&types=BUG"]
+
+== License
+
+The Code Analysis Maven Plugin is licensed under the http://www.apache.org/licenses/LICENSE-2.0[Apache License, Version 2.0].
