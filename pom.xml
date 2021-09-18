@@ -433,4 +433,38 @@
 
     </profiles>
 
+    <developers>
+        <developer>
+            <name>Philip Graf</name>
+            <email>git@acanda.ch</email>
+            <organization>Philip Graf</organization>
+            <organizationUrl>https://github.com/acanda</organizationUrl>
+            <roles>
+                <role>Founder</role>
+                <role>Maintainer</role>
+            </roles>
+        </developer>
+    </developers>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <scm>
+        <connection>scm:git:git@github.com:acanda/code-analysis-maven-plugin.git</connection>
+        <developerConnection>scm:git:git@github.com:acanda/code-analysis-maven-plugin.git</developerConnection>
+        <url>https://github.com/acanda/code-analysis-maven-plugin.git</url>
+        <tag>HEAD</tag>
+    </scm>
+
+    <issueManagement>
+        <system>Github</system>
+        <url>https://github.com/acanda/code-analysis-maven-plugin/issues</url>
+    </issueManagement>
+
+
 </project>
