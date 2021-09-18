@@ -15,7 +15,8 @@
     <url>https://github.com/acanda/code-analysis-maven-plugin</url>
 
     <properties>
-        <maven.compiler.release>11</maven.compiler.release>
+        <java.version>11</java.version>
+        <maven.compiler.release>${java.version}</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.version>3.8.2</maven.version>
         <junit.version>5.8.0</junit.version>
@@ -276,6 +277,30 @@
                         <goals>
                             <goal>check</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <id>enforce-maven</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireMavenVersion>
+                                    <version>3.3</version>
+                                </requireMavenVersion>
+                                <requireJavaVersion>
+                                    <version>${java.version}</version>
+                                </requireJavaVersion>
+                            </rules>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
