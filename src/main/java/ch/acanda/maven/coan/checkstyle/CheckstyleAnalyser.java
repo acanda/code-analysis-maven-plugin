@@ -1,6 +1,7 @@
 package ch.acanda.maven.coan.checkstyle;
 
 import ch.acanda.maven.coan.Analysis;
+import ch.acanda.maven.coan.Configs;
 import com.puppycrawl.tools.checkstyle.Checker;
 import com.puppycrawl.tools.checkstyle.ConfigurationLoader;
 import com.puppycrawl.tools.checkstyle.ModuleFactory;
@@ -13,7 +14,6 @@ import com.puppycrawl.tools.checkstyle.api.RootModule;
 import org.apache.maven.model.Build;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.project.MavenProject;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,7 +21,6 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.stream.Stream;
@@ -39,19 +38,27 @@ public class CheckstyleAnalyser {
         log = config.getLog();
     }
 
+    private static Stream<Path> getFiles(final Path directory) {
+        try {
+            return Files.walk(directory);
+        } catch (final IOException e) {
+            throw new UncheckedIOException("Failed to collect source files.", e);
+        }
+    }
+
     public Analysis analyse() throws MojoFailureException {
         try {
-            final Path configPath = getConfig(config.getProject(), new ArrayList<>());
-            log.debug("Found Checkstyle configPath at " + configPath + ".");
+            final Path configPath = Configs.resolve("Checkstyle", config.getConfigPath(), config.getProject(),
+                    config.getLog());
 
             final Configuration configuration = ConfigurationLoader.loadConfiguration(
-                configPath.toString(),
-                new PropertiesExpander(new Properties()),
-                ConfigurationLoader.IgnoredModulesOptions.OMIT,
-                new ThreadModeSettings(1, 1));
+                    configPath.toString(),
+                    new PropertiesExpander(new Properties()),
+                    ConfigurationLoader.IgnoredModulesOptions.OMIT,
+                    new ThreadModeSettings(1, 1));
 
             final ModuleFactory factory = new PackageObjectFactory(
-                Checker.class.getPackage().getName(), Checker.class.getClassLoader());
+                    Checker.class.getPackage().getName(), Checker.class.getClassLoader());
             final RootModule rootModule = (RootModule) factory.createModule(configuration.getName());
             rootModule.setModuleClassLoader(Checker.class.getClassLoader());
             rootModule.configure(configuration);
@@ -72,42 +79,17 @@ public class CheckstyleAnalyser {
         }
     }
 
-    private Path getConfig(final MavenProject project, final List<Path> failed) throws MojoFailureException {
-        final Path baseDir = project.getBasedir().toPath();
-        final Path config = baseDir.resolve(this.config.getConfigPath());
-        if (Files.exists(config)) {
-            if (Files.isReadable(config)) {
-                return config;
-            } else {
-                log.warn(config + " exists but is not readable.");
-            }
-        }
-        failed.add(config);
-        if (project.hasParent()) {
-            return getConfig(project.getParent(), failed);
-        }
-        throw new MojoFailureException("Unable to find Checkstyle configuration.");
-    }
-
     private List<File> getFiles() {
         final Build build = config.getProject().getBuild();
         final Path sources = Paths.get(build.getSourceDirectory());
         final Path testSources = Paths.get(build.getTestSourceDirectory());
         return Stream.of(sources, testSources)
-            .filter(Files::exists)
-            .flatMap(CheckstyleAnalyser::getFiles)
-            .filter(Files::isRegularFile)
-            .filter(path -> path.getFileName().toString().endsWith(".java"))
-            .map(Path::toFile)
-            .collect(toList());
-    }
-
-    private static Stream<Path> getFiles(final Path directory) {
-        try {
-            return Files.walk(directory);
-        } catch (final IOException e) {
-            throw new UncheckedIOException("Failed to collect source files.", e);
-        }
+                .filter(Files::exists)
+                .flatMap(CheckstyleAnalyser::getFiles)
+                .filter(Files::isRegularFile)
+                .filter(path -> path.getFileName().toString().endsWith(".java"))
+                .map(Path::toFile)
+                .collect(toList());
     }
 
 }
