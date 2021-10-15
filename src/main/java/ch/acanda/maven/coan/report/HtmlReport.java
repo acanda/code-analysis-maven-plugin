@@ -21,6 +21,7 @@ import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.summarizingLong;
 import static org.apache.commons.text.StringEscapeUtils.escapeHtml4;
 
+@SuppressWarnings("java:S1192" /* duplicated strings: creating constants for html tags makes the code less readable. */)
 public class HtmlReport {
 
     private final Artifact artifact;
