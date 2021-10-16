@@ -17,7 +17,7 @@ import static java.util.stream.Collectors.joining;
 public class Configs {
 
     public static Path resolve(final String tool, final String configPath, final MavenProject project, final Log log)
-            throws MojoFailureException {
+        throws MojoFailureException {
         final ArrayList<Path> failed = new ArrayList<>();
         final Optional<Path> path = resolveRecursively(configPath, project, log, failed);
         path.ifPresent(p -> log.debug("Found " + tool + " configPath at " + p + "."));
@@ -29,7 +29,7 @@ public class Configs {
     }
 
     private static Optional<Path> resolveRecursively(final String configPath, final MavenProject project,
-                                                     final Log log, final List<Path> failed) {
+        final Log log, final List<Path> failed) {
         final Path baseDir = project.getBasedir().toPath();
         final Path config = baseDir.resolve(configPath);
         if (Files.exists(config)) {

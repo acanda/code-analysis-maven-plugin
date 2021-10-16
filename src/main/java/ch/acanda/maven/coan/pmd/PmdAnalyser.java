@@ -39,30 +39,6 @@ public class PmdAnalyser {
         log = config.getLog();
     }
 
-    private static Stream<Path> getFiles(final Path directory) {
-        try {
-            return Files.walk(directory);
-        } catch (final IOException e) {
-            throw new UncheckedIOException("Failed to collect source files.", e);
-        }
-    }
-
-    private static List<RuleSet> loadRuleSets(final Path config) {
-        final RuleSetLoader loader = new RuleSetLoader();
-        loader.enableCompatibility(false);
-        return List.of(loader.loadFromResource(config.toString()));
-    }
-
-    private static Stream<String> getRules(final List<RuleSet> ruleSets) {
-        return ruleSets.stream().flatMap(rs -> rs.getRules().stream()).map(Rule::getName).sorted();
-    }
-
-    private static PMDConfiguration createPmdConfiguration(final Path targetPath) {
-        final PMDConfiguration configuration = new PMDConfiguration();
-        configuration.setAnalysisCacheLocation(targetPath.resolve("pmd.cache").toString());
-        return configuration;
-    }
-
     @SuppressWarnings("java:S4792" /* False positive */)
     public Analysis analyse() throws MojoFailureException {
         // This triggers a false positive in Sonar (java:S4792).
@@ -93,11 +69,35 @@ public class PmdAnalyser {
         final Path sources = Paths.get(build.getSourceDirectory());
         final Path testSources = Paths.get(build.getTestSourceDirectory());
         return Stream.of(sources, testSources)
-                .filter(Files::exists)
-                .flatMap(PmdAnalyser::getFiles)
-                .filter(Files::isRegularFile)
-                .map(path -> new FileDataSource(path.toFile()))
-                .collect(toList());
+            .filter(Files::exists)
+            .flatMap(PmdAnalyser::getFiles)
+            .filter(Files::isRegularFile)
+            .map(path -> new FileDataSource(path.toFile()))
+            .collect(toList());
+    }
+
+    private static Stream<Path> getFiles(final Path directory) {
+        try {
+            return Files.walk(directory);
+        } catch (final IOException e) {
+            throw new UncheckedIOException("Failed to collect source files.", e);
+        }
+    }
+
+    private static List<RuleSet> loadRuleSets(final Path config) {
+        final RuleSetLoader loader = new RuleSetLoader();
+        loader.enableCompatibility(false);
+        return List.of(loader.loadFromResource(config.toString()));
+    }
+
+    private static Stream<String> getRules(final List<RuleSet> ruleSets) {
+        return ruleSets.stream().flatMap(rs -> rs.getRules().stream()).map(Rule::getName).sorted();
+    }
+
+    private static PMDConfiguration createPmdConfiguration(final Path targetPath) {
+        final PMDConfiguration configuration = new PMDConfiguration();
+        configuration.setAnalysisCacheLocation(targetPath.resolve("pmd.cache").toString());
+        return configuration;
     }
 
 }

@@ -116,7 +116,7 @@ public class RecordingLog implements Log {
                 builder.append(' ').append(content);
             }
             if (error != null) {
-                builder.append('\n').append(error.toString());
+                builder.append('\n').append(error);
             }
             return builder.toString();
         }

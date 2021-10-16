@@ -4,8 +4,8 @@
          xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 http://pmd.sourceforge.net/ruleset_2_0_0.xsd"
          xmlns="http://pmd.sourceforge.net/ruleset/2.0.0">
 
-    <description/>
+  <description/>
 
-    <rule ref="category/java/codestyle.xml/ExtendsObject"/>
+  <rule ref="category/java/codestyle.xml/ExtendsObject"/>
 
 </ruleset>

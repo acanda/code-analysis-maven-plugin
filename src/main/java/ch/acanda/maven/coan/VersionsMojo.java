@@ -28,7 +28,7 @@ public class VersionsMojo extends AbstractMojo {
 
     @SuppressWarnings("PMD.AvoidCatchingGenericException")
     private String getVersion(final Class<?> cls, final String groupId, final String artifactId)
-            throws MojoFailureException {
+        throws MojoFailureException {
         final String pomProperties = "/META-INF/maven/" + groupId + "/" + artifactId + "/pom.properties";
         try (InputStream in = cls.getResourceAsStream(pomProperties)) {
             final Properties props = new Properties();
