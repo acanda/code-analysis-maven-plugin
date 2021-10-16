@@ -67,8 +67,9 @@ public class AggregateMojo extends AbstractCoanMojo {
     private void failOnIssues(final List<Analysis> analyses) throws MojoFailureException {
         final boolean foundIssues = analyses.stream().anyMatch(Analysis::foundIssues);
         if (isFailOnIssues() && foundIssues) {
-            final long count = analyses.stream().mapToInt(analysis -> analysis.getIssues().size()).count();
-            throw new MojoFailureException("Code analysis found " + count + " issues.");
+            final long sum = analyses.stream().mapToInt(analysis -> analysis.getIssues().size()).sum();
+            final String issues = sum == 1 ? " issue" : " issues";
+            throw new MojoFailureException("Code analysis found " + sum + issues + ".");
         }
     }
 
