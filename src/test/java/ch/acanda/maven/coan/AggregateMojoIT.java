@@ -35,7 +35,7 @@ public class AggregateMojoIT {
 
     @MavenTest
     @MavenGoal("ch.acanda.maven:code-analysis-maven-plugin:aggregate")
-    @SystemProperty(value = "coan.report.formats", content = "html,gitlab")
+    @SystemProperty(value = "coan.report.formats", content = "html,gitlab,xyz")
     public void aggregateFailsWithIssues(final MavenExecutionResult project) {
         final MavenProjectResultAssert target = assertThat(project).isFailure()
             .project().hasTarget();
@@ -65,6 +65,7 @@ public class AggregateMojoIT {
             " [LineLengthCheck] Line is longer than 35 characters (found 51). (World.java:2)",
             " [LineLengthCheck] Line is longer than 35 characters (found 36). (World.java:3)"
         );
+        assertThat(project).out().warn().contains("The following report formats are invalid and are ignored: xyz");
     }
 
     private static Condition<MavenProjectResult> aTargetDirectory() {
