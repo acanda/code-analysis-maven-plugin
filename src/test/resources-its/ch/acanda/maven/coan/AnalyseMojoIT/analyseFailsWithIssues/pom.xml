@@ -28,6 +28,9 @@
             <goals>
               <goal>analyse</goal>
             </goals>
+            <configuration>
+              <reportFormats>html,gitlab</reportFormats>
+            </configuration>
           </execution>
         </executions>
       </plugin>

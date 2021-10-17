@@ -4,6 +4,7 @@ import com.soebes.itf.extension.assertj.MavenProjectResultAssert;
 import com.soebes.itf.jupiter.extension.MavenGoal;
 import com.soebes.itf.jupiter.extension.MavenJupiterExtension;
 import com.soebes.itf.jupiter.extension.MavenTest;
+import com.soebes.itf.jupiter.extension.SystemProperty;
 import com.soebes.itf.jupiter.maven.MavenExecutionResult;
 import com.soebes.itf.jupiter.maven.MavenProjectResult;
 import org.assertj.core.api.Condition;
@@ -17,9 +18,11 @@ public class AggregateMojoIT {
 
     @MavenTest
     @MavenGoal("ch.acanda.maven:code-analysis-maven-plugin:aggregate")
+    @SystemProperty(value = "coan.report.formats", content = "html,gitlab")
     public void aggregateSucceedsWithoutIssues(final MavenExecutionResult project) {
         final MavenProjectResultAssert target = assertThat(project).isSuccessful().project().hasTarget();
         target.withFile("code-analysis/report.html").exists();
+        target.withFile("code-analysis/report.gitlab.json").exists();
         assertThat(project).out().info().contains("PMD did not find any issues in aggregate.");
         assertThat(project).out().info().contains("Checkstyle did not find any issues in aggregate.");
         assertThat(project).out().info().contains("PMD did not find any issues in aggregate-module-1.");
@@ -32,10 +35,12 @@ public class AggregateMojoIT {
 
     @MavenTest
     @MavenGoal("ch.acanda.maven:code-analysis-maven-plugin:aggregate")
+    @SystemProperty(value = "coan.report.formats", content = "html,gitlab")
     public void aggregateFailsWithIssues(final MavenExecutionResult project) {
         final MavenProjectResultAssert target = assertThat(project).isFailure()
             .project().hasTarget();
         target.withFile("code-analysis/report.html").exists();
+        target.withFile("code-analysis/report.gitlab.json").exists();
         assertThat(project).out().info().contains("PMD did not find any issues in aggregate.");
         assertThat(project).out().info().contains("Checkstyle did not find any issues in aggregate.");
         assertThat(project).out().warn().containsSubsequence(

@@ -2,6 +2,7 @@ package ch.acanda.maven.coan;
 
 import ch.acanda.maven.coan.checkstyle.CheckstyleConfig;
 import ch.acanda.maven.coan.pmd.PmdConfig;
+import ch.acanda.maven.coan.report.GitLabReport;
 import ch.acanda.maven.coan.report.HtmlReport;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -12,13 +13,17 @@ import org.apache.maven.project.MavenProject;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 abstract class AbstractCoanMojo extends AbstractMojo {
 
+    private static final String REPORT_FORMAT_HTML = "html";
+    private static final String REPORT_FORMAT_GITLAB = "gitlab";
     private static final String DEFAULT_FAIL_ON_ISSUES = "true";
     private static final String DEFAULT_TARGET_PATH = "${project.build.directory}/code-analysis";
     private static final String DEFAULT_PMD_CONFIG_PATH = "config/pmd.xml";
     private static final String DEFAULT_CHECKSTYLE_CONFIG_PATH = "config/checkstyle.xml";
+    private static final String DEFAULT_REPORT_FORMATS = REPORT_FORMAT_HTML;
 
     @Parameter(defaultValue = "${project}")
     @Getter(AccessLevel.PROTECTED)
@@ -40,6 +45,10 @@ abstract class AbstractCoanMojo extends AbstractMojo {
     @Getter(AccessLevel.PROTECTED)
     private String checkstyleConfigPath;
 
+    @Parameter(property = "coan.report.formats", required = true, defaultValue = DEFAULT_REPORT_FORMATS)
+    @Getter(AccessLevel.PROTECTED)
+    private List<String> reportFormats;
+
     protected PmdConfig assemblePmdConfig(final MavenProject project) {
         return PmdConfig.builder()
             .project(project)
@@ -58,12 +67,22 @@ abstract class AbstractCoanMojo extends AbstractMojo {
             .build();
     }
 
-    protected void createHtmlReport(final Analysis... analyses) throws MojoFailureException {
-        final HtmlReport report =
-            new HtmlReport(getProject().getArtifact(), getProject().getBasedir().toPath(), analyses);
-        final Path reportFile = Paths.get(getTargetPath()).resolve("report.html");
-        report.writeTo(reportFile);
-        getLog().info("The HTML report is available at " + reportFile);
+    protected void createReports(final Analysis... analyses) throws MojoFailureException {
+        reportFormats.forEach(format -> getLog().info("Format: " + format));
+        final Path baseDir = getProject().getBasedir().toPath();
+        final Path targetDir = Paths.get(getTargetPath());
+        if (reportFormats.contains(REPORT_FORMAT_HTML)) {
+            final HtmlReport report = new HtmlReport(getProject().getArtifact(), baseDir, analyses);
+            final Path reportFile = targetDir.resolve("report.html");
+            report.writeTo(reportFile);
+            getLog().info("The HTML report is available at " + reportFile);
+        }
+        if (reportFormats.contains(REPORT_FORMAT_GITLAB)) {
+            final GitLabReport report = new GitLabReport(baseDir, analyses);
+            final Path reportFile = targetDir.resolve("report.gitlab.json");
+            report.writeTo(reportFile);
+            getLog().info("The GitLab Code Quality report is available at " + reportFile);
+        }
     }
 
 }

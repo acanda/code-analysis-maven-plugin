@@ -18,6 +18,7 @@ public class AnalyseMojoIT {
     public void analyseSucceedsWithoutIssues(final MavenExecutionResult project) {
         final MavenProjectResultAssert target = assertThat(project).isSuccessful().project().hasTarget();
         target.withFile("code-analysis/report.html").exists();
+        target.withFile("code-analysis/report.gitlab.json").exists();
         assertThat(project).out().info().contains("PMD did not find any issues in analyse.");
         assertThat(project).out().info().contains("Checkstyle did not find any issues in analyse.");
     }
@@ -28,6 +29,7 @@ public class AnalyseMojoIT {
         final MavenProjectResultAssert target = assertThat(project).isFailure()
             .project().hasTarget();
         target.withFile("code-analysis/report.html").exists();
+        target.withFile("code-analysis/report.gitlab.json").exists();
         assertThat(project).out().warn().containsSubsequence(
             "PMD found 1 issue in analyse:",
             getPathForJavaSource("Hello.java"),

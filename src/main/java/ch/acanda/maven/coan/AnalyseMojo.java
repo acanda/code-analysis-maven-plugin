@@ -36,7 +36,7 @@ public class AnalyseMojo extends AbstractCoanMojo {
 
             LogReport.report(pmdAnalysis, project.getBasedir().toPath(), getLog());
             LogReport.report(checkstyleAnalysis, project.getBasedir().toPath(), getLog());
-            createHtmlReport(pmdAnalysis, checkstyleAnalysis);
+            createReports(pmdAnalysis, checkstyleAnalysis);
             failOnIssues(pmdAnalysis, checkstyleAnalysis);
 
         } catch (final ExecutionException e) {

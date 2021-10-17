@@ -49,7 +49,7 @@ public class AggregateMojo extends AbstractCoanMojo {
             executorService.shutdown();
 
             analyses.forEach(analysis -> LogReport.report(analysis, getProject().getBasedir().toPath(), getLog()));
-            createHtmlReport(analyses.toArray(Analysis[]::new));
+            createReports(analyses.toArray(Analysis[]::new));
             failOnIssues(analyses);
 
         } catch (final RejectedExecutionException e) {

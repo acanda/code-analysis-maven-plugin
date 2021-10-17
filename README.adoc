@@ -34,9 +34,10 @@ If you put the following configuration into the parent pom of a multi-module pro
             </executions>
             <configuration> <!--2-->
                 <failOnIssues>true</failOnIssues>
-                <targetPath>${project.build.directory}/code-analysis</targetPath>
                 <pmdConfigPath>config/pmd.xml</pmdConfigPath>
                 <checkstyleConfigPath>config/checkstyle.xml</checkstyleConfigPath>
+                <targetPath>${project.build.directory}/code-analysis</targetPath>
+                <reportFormats>html</reportFormats>
             </configuration>
         </plugin>
     </plugins>
@@ -71,9 +72,10 @@ or by adding a build plugin configuration without a goal as shown below.
             <version>{plugin-version}</version>
             <configuration> <!--1-->
                 <failOnIssues>true</failOnIssues>
-                <targetPath>${project.build.directory}/code-analysis</targetPath>
                 <pmdConfigPath>config/pmd.xml</pmdConfigPath>
                 <checkstyleConfigPath>config/checkstyle.xml</checkstyleConfigPath>
+                <targetPath>${project.build.directory}/code-analysis</targetPath>
+                <reportFormats>html</reportFormats>
             </configuration>
         </plugin>
     </plugins>
@@ -93,14 +95,8 @@ If you run Maven with `--fail-at-end`, then the build will not immediately fail 
 Default value: `true` +
 Property: `coan.failOnIssues`
 
-targetPath::
-The working directory of the plugin.
-The final report `report.html` will be saved in this directory as well as some other temporary files. +
-Default value: `${project.build.directory}/code-analysis` +
-Property: `coan.targetPath`
-
 pmdConfigPath::
-TThe path to the PMD configuration file.
+The path to the PMD configuration file.
 This can be an absolute or relative path.
 If the path is relative, then the plugin tries to resolve it against the base path of the project or module that it is analysing.
 If it cannot resolve the path, then it recursively tries to resolve it against the parent projects.
@@ -109,13 +105,33 @@ Default value: `config/pmd.xml` +
 Property: `coan.pmd.configPath`
 
 pmdConfigPath::
-TThe path to the Checkstyle configuration file.
+The path to the Checkstyle configuration file.
 This can be an absolute or relative path.
 If the path is relative, then the plugin tries to resolve it against the base path of the project or module that it is analysing.
 If it cannot resolve the path, then it recursively tries to resolve it against the parent projects.
 This allows you to have both a global configuration in a parent project and special configurations for selected modules. +
 Default value: `config/checkstyle.xml` +
 Property: `coan.checkstyle.configPath`
+
+targetPath::
+The working directory of the plugin.
+The final report(s), e.g. `report.html`, will be saved in this directory as well as some other temporary files. +
+Default value: `${project.build.directory}/code-analysis` +
+Property: `coan.targetPath`
+
+reportFormats::
+The plugin can create reports in different formats.
+This parameter contains a comma separated list of formats.
++
+Default value: `html` +
+Property: `coan.report.formats` +
++
+The supported formats are `html` and `gitlab`:
+
+html:::
+Creates an HTML report `report.html` that lists all issues the plugin found.
+gitlab:::
+Creates a GitLab Code Quality report `report.gitlab.json` that you can attach as an artifact to your GitLab CI/CD job so the issues the plugin found are summarized in merge requests and the pipeline view, see https://docs.gitlab.com/ee/ci/yaml/index.html#artifactsreportscodequality[artifacts:reports:codequality].
 
 == Build Status
 
