@@ -24,10 +24,11 @@ import static java.lang.String.format;
 
 /**
  * Creates a code quality report for GitLab.
- * <br/>
+ * <p>
  * <a href="https://docs.gitlab.com/ee/user/project/merge_requests/code_quality.html#implementing-a-custom-tool">
  * GitLab code quality report format
  * </a>
+ * </p>
  */
 public class GitLabReport {
 
