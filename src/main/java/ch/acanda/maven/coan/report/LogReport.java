@@ -6,7 +6,6 @@ import lombok.experimental.UtilityClass;
 import org.apache.maven.plugin.logging.Log;
 
 import java.nio.file.Path;
-import java.util.List;
 import java.util.stream.Collectors;
 
 import static java.lang.String.format;
@@ -27,10 +26,9 @@ public class LogReport {
     public static void report(final Analysis analysis, final Path baseDir, final Log log) {
         final String artifactId = analysis.getProject().getArtifactId();
         if (analysis.foundIssues()) {
-            final List<? extends Issue> issues = analysis.getIssues();
             final var summary = "%s found %s in %s:";
             log.warn(format(ENGLISH, summary, analysis.getToolName(), numberOfIssues(analysis), artifactId));
-            issues.stream()
+            analysis.getIssues().stream()
                 .collect(Collectors.groupingBy(Issue::getFile))
                 .forEach((file, fileIssues) -> {
                     log.warn(baseDir.relativize(file).toString());
@@ -61,7 +59,7 @@ public class LogReport {
     }
 
     private static String numberOfIssues(final Analysis analysis) {
-        final int count = analysis.getIssues().size();
+        final int count = analysis.getNumberOfIssues();
         final String noun = count == 1 ? " issue" : " issues";
         return count + noun;
     }

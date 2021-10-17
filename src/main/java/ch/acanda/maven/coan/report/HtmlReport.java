@@ -76,7 +76,7 @@ public class HtmlReport {
         if (foundIssues) {
             html.println("<h2>Summary</h2>");
             analyses.stream()
-                .collect(groupingBy(Analysis::getToolName, summarizingLong(a -> a.getIssues().size())))
+                .collect(groupingBy(Analysis::getToolName, summarizingLong(Analysis::getNumberOfIssues)))
                 .entrySet()
                 .stream()
                 .map(entry -> escapeHtml4(entry.getKey()) + " found " + numberOfIssues(entry.getValue()) + ".")

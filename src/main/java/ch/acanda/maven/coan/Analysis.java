@@ -12,7 +12,12 @@ public interface Analysis {
         return !getIssues().isEmpty();
     }
 
+    @SuppressWarnings("java:S1452")
     List<? extends Issue> getIssues();
+
+    default int getNumberOfIssues() {
+        return getIssues().size();
+    }
 
     MavenProject getProject();
 
