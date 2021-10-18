@@ -6,6 +6,7 @@ import ch.acanda.maven.coan.report.GitLabReport;
 import ch.acanda.maven.coan.report.HtmlReport;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.Setter;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -19,6 +20,7 @@ abstract class AbstractCoanMojo extends AbstractMojo {
 
     private static final String REPORT_FORMAT_HTML = "html";
     private static final String REPORT_FORMAT_GITLAB = "gitlab";
+    private static final String DEFAULT_SKIP = "false";
     private static final String DEFAULT_FAIL_ON_ISSUES = "true";
     private static final String DEFAULT_TARGET_PATH = "${project.build.directory}/code-analysis";
     private static final String DEFAULT_PMD_CONFIG_PATH = "config/pmd.xml";
@@ -28,6 +30,11 @@ abstract class AbstractCoanMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project}")
     @Getter(AccessLevel.PROTECTED)
     private MavenProject project;
+
+    @Parameter(property = "coan.skip", required = true, defaultValue = DEFAULT_SKIP)
+    @Getter(AccessLevel.PROTECTED)
+    @Setter(AccessLevel.PROTECTED)
+    private boolean skip;
 
     @Parameter(property = "coan.failOnIssues", required = true, defaultValue = DEFAULT_FAIL_ON_ISSUES)
     @Getter(AccessLevel.PROTECTED)
@@ -48,6 +55,17 @@ abstract class AbstractCoanMojo extends AbstractMojo {
     @Parameter(property = "coan.report.formats", required = true, defaultValue = DEFAULT_REPORT_FORMATS)
     @Getter(AccessLevel.PROTECTED)
     private Set<String> reportFormats;
+
+    @Override
+    public final void execute() throws MojoFailureException {
+        if (skip) {
+            getLog().info("Skipping code analysis");
+            return;
+        }
+        analyseCode();
+    }
+
+    protected abstract void analyseCode() throws MojoFailureException;
 
     protected PmdConfig assemblePmdConfig(final MavenProject project) {
         return PmdConfig.builder()

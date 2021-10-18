@@ -29,7 +29,7 @@ public class AggregateMojo extends AbstractCoanMojo {
     private List<MavenProject> reactorProjects;
 
     @Override
-    public void execute() throws MojoFailureException {
+    protected void analyseCode() throws MojoFailureException {
 
         logReactorProjects();
 

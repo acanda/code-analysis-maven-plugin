@@ -20,7 +20,7 @@ import static java.util.stream.Collectors.joining;
 public class AnalyseMojo extends AbstractCoanMojo {
 
     @Override
-    public void execute() throws MojoFailureException {
+    protected void analyseCode() throws MojoFailureException {
         final ExecutorService executorService = Executors.newFixedThreadPool(2);
         try {
             final MavenProject project = getProject();

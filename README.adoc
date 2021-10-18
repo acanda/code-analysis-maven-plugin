@@ -33,6 +33,7 @@ If you put the following configuration into the parent pom of a multi-module pro
                 </execution>
             </executions>
             <configuration> <!--2-->
+                <skip>false</skip>
                 <failOnIssues>true</failOnIssues>
                 <pmdConfigPath>config/pmd.xml</pmdConfigPath>
                 <checkstyleConfigPath>config/checkstyle.xml</checkstyleConfigPath>
@@ -71,6 +72,7 @@ or by adding a build plugin configuration without a goal as shown below.
             <artifactId>code-analysis-maven-plugin</artifactId>
             <version>{plugin-version}</version>
             <configuration> <!--1-->
+                <skip>false</skip>
                 <failOnIssues>true</failOnIssues>
                 <pmdConfigPath>config/pmd.xml</pmdConfigPath>
                 <checkstyleConfigPath>config/checkstyle.xml</checkstyleConfigPath>
@@ -88,6 +90,11 @@ The values in this example are the default values.
 === Configuration Parameters
 
 All parameters are optional.
+
+skip::
+Skips the execution when set to `true`. +
+Default value: `false` +
+Property: `coan.skip`
 
 failOnIssues::
 Fails the build if any of the code analysers finds any issues.
