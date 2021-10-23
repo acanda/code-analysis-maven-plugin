@@ -2,7 +2,6 @@ package ch.acanda.maven.coan.report;
 
 import ch.acanda.maven.coan.Analysis;
 import ch.acanda.maven.coan.Issue;
-import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 
@@ -24,12 +23,12 @@ import static org.apache.commons.text.StringEscapeUtils.escapeHtml4;
 @SuppressWarnings("java:S1192" /* duplicated strings: creating constants for html tags makes the code less readable. */)
 public class HtmlReport {
 
-    private final Artifact artifact;
+    private final MavenProject project;
     private final Path baseDir;
     private final List<Analysis> analyses;
 
-    public HtmlReport(final Artifact artifact, final Path baseDir, final Analysis... analyses) {
-        this.artifact = artifact;
+    public HtmlReport(final MavenProject project, final Path baseDir, final Analysis... analyses) {
+        this.project = project;
         this.baseDir = baseDir;
         this.analyses = Arrays.asList(analyses);
     }
@@ -58,8 +57,8 @@ public class HtmlReport {
     private void writeBody(final PrintWriter html) {
         html.println("<body>");
         html.print("<h1>Code Analysis for ");
-        html.print(escapeHtml4(artifact.getArtifactId()));
-        final String version = artifact.getVersion();
+        html.print(escapeHtml4(getProjectName(project)));
+        final String version = project.getVersion();
         if (version != null) {
             html.print(" ");
             html.print(version);

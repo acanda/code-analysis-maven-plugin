@@ -6,6 +6,7 @@
   <artifactId>analyse</artifactId>
   <version>1.0</version>
   <packaging>jar</packaging>
+  <name>Analyse With Issues</name>
 
   <properties>
     <maven.compiler.release>11</maven.compiler.release>

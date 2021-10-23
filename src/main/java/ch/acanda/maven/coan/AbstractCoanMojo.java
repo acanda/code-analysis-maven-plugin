@@ -89,7 +89,7 @@ abstract class AbstractCoanMojo extends AbstractMojo {
         final Path baseDir = getProject().getBasedir().toPath();
         final Path targetDir = Paths.get(getTargetPath());
         if (reportFormats.remove(REPORT_FORMAT_HTML)) {
-            final HtmlReport report = new HtmlReport(getProject().getArtifact(), baseDir, analyses);
+            final HtmlReport report = new HtmlReport(getProject(), baseDir, analyses);
             final Path reportFile = targetDir.resolve("report.html");
             report.writeTo(reportFile);
             getLog().info("The HTML report is available at " + reportFile);

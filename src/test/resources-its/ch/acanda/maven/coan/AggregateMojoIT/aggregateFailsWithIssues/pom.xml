@@ -6,6 +6,7 @@
   <artifactId>aggregate</artifactId>
   <version>1.0</version>
   <packaging>pom</packaging>
+  <name>Aggregate With Issues</name>
 
   <modules>
     <module>module1</module>
