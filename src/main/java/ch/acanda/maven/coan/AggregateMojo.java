@@ -22,7 +22,7 @@ import java.util.stream.Stream;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 
-@Mojo(name = "aggregate", aggregator = true)
+@Mojo(name = "aggregate", aggregator = true, threadSafe = true)
 public class AggregateMojo extends AbstractCoanMojo {
 
     @Parameter(property = "reactorProjects", readonly = true, required = true)

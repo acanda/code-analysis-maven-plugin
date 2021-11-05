@@ -16,7 +16,7 @@ import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.joining;
 
-@Mojo(name = "analyse", defaultPhase = LifecyclePhase.VERIFY)
+@Mojo(name = "analyse", defaultPhase = LifecyclePhase.VERIFY, threadSafe = true)
 public class AnalyseMojo extends AbstractCoanMojo {
 
     @Override
