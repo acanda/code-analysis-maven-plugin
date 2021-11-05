@@ -23,6 +23,8 @@ public class AggregateMojoIT {
         final MavenProjectResultAssert target = assertThat(project).isSuccessful().project().hasTarget();
         target.withFile("code-analysis/report.html").exists();
         target.withFile("code-analysis/report.gitlab.json").exists();
+        assertThat(project).out().info().anyMatch(line -> line.matches("PMD \\d+\\.\\d+\\.\\d+"));
+        assertThat(project).out().info().anyMatch(line -> line.matches("Checkstyle \\d+\\.\\d+(\\.\\d+)?"));
         assertThat(project).out().info().contains("PMD did not find any issues in aggregate.");
         assertThat(project).out().info().contains("Checkstyle did not find any issues in aggregate.");
         assertThat(project).out().info().contains("PMD did not find any issues in aggregate-module-1.");
@@ -41,6 +43,8 @@ public class AggregateMojoIT {
             .project().hasTarget();
         target.withFile("code-analysis/report.html").exists();
         target.withFile("code-analysis/report.gitlab.json").exists();
+        assertThat(project).out().info().anyMatch(line -> line.matches("PMD \\d+\\.\\d+\\.\\d+"));
+        assertThat(project).out().info().anyMatch(line -> line.matches("Checkstyle \\d+\\.\\d+(\\.\\d+)?"));
         assertThat(project).out().info().contains("PMD did not find any issues in aggregate.");
         assertThat(project).out().info().contains("Checkstyle did not find any issues in aggregate.");
         assertThat(project).out().warn().containsSubsequence(
@@ -75,4 +79,5 @@ public class AggregateMojoIT {
     private static String getPathForJavaSource(final String module, final String filename) {
         return String.join(File.separator, module, "src", "main", "java", filename);
     }
+
 }

@@ -4,6 +4,7 @@ import ch.acanda.maven.coan.checkstyle.CheckstyleConfig;
 import ch.acanda.maven.coan.pmd.PmdConfig;
 import ch.acanda.maven.coan.report.GitLabReport;
 import ch.acanda.maven.coan.report.HtmlReport;
+import ch.acanda.maven.coan.version.Versions;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -62,6 +63,8 @@ abstract class AbstractCoanMojo extends AbstractMojo {
             getLog().info("Skipping code analysis");
             return;
         }
+        getLog().info("PMD " + Versions.getPmdVersion());
+        getLog().info("Checkstyle " + Versions.getCheckstyleVersion());
         analyseCode();
     }
 
