@@ -18,7 +18,7 @@ class VersionsMojoTest {
         assertThat(log.getLogAsString()).matches(
             "\\[info] code-analysis-maven-plugin \\d+\\.\\d+\\.\\d+\n"
             + "\\[info] PMD \\d+\\.\\d+\\.\\d+\n"
-            + "\\[info] Checkstyle \\d+\\.\\d+\\.\\d+"
+            + "\\[info] Checkstyle \\d+\\.\\d+(\\.\\d+)?"
         );
     }
 
