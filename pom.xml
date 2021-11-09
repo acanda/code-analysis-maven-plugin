@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>ch.acanda.maven</groupId>
@@ -249,7 +250,7 @@
       <plugin>
         <groupId>ch.acanda.maven</groupId>
         <artifactId>code-analysis-maven-plugin</artifactId>
-        <version>0.3.0</version>
+        <version>0.4.0</version>
         <executions>
           <execution>
             <id>code-analysis</id>
@@ -263,7 +264,7 @@
       <plugin>
         <groupId>org.owasp</groupId>
         <artifactId>dependency-check-maven</artifactId>
-        <version>6.3.1</version>
+        <version>6.5.0</version>
         <executions>
           <execution>
             <goals>
@@ -295,6 +296,16 @@
             </configuration>
           </execution>
         </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>versions-maven-plugin</artifactId>
+        <version>2.8.1</version>
+        <configuration>
+          <rulesUri>file://${project.basedir}/config/versions.xml</rulesUri>
+          <processDependencyManagementTransitive>false</processDependencyManagementTransitive>
+        </configuration>
       </plugin>
 
     </plugins>
