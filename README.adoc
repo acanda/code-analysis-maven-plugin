@@ -1,12 +1,11 @@
 = Coan - Code Analysis Maven Plugin
-:plugin-version: 0.3.0
+:plugin-version: 0.5.0
 :idprefix:
 :idseparator: -
 
 Coan is a code analysis Maven plugin that runs Checkstyle and PMD and generates a single page HTML report.
 You can either generate an individual report for each module or an aggregated report for all modules in a Maven project.
 It also logs the issues it finds to the console with links that are clickable and open the respective file in IntelliJ IDEA.
-
 
 == Usage
 
