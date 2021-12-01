@@ -1,11 +1,10 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>ch.acanda.maven</groupId>
   <artifactId>code-analysis-maven-plugin</artifactId>
   <name>code-analysis-maven-plugin</name>
-  <version>0.4.1-SNAPSHOT</version>
+  <version>0.5.0</version>
   <packaging>maven-plugin</packaging>
 
   <description>
@@ -466,7 +465,7 @@
     <connection>scm:git:git@github.com:acanda/code-analysis-maven-plugin.git</connection>
     <developerConnection>scm:git:git@github.com:acanda/code-analysis-maven-plugin.git</developerConnection>
     <url>https://github.com/acanda/code-analysis-maven-plugin.git</url>
-    <tag>HEAD</tag>
+    <tag>release/0.5.0</tag>
   </scm>
 
   <issueManagement>
