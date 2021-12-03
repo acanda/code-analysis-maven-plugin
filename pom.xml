@@ -3,7 +3,7 @@
 
   <groupId>ch.acanda.maven</groupId>
   <artifactId>code-analysis-maven-plugin</artifactId>
-  <name>code-analysis-maven-plugin</name>
+  <name>Coan - Code Analysis Maven Plugin</name>
   <version>0.5.1-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
@@ -194,7 +194,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-plugin-plugin</artifactId>
-        <version>3.6.1</version>
+        <version>3.6.2</version>
         <executions>
           <execution>
             <id>default-descriptor</id>
