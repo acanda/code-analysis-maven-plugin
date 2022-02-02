@@ -110,7 +110,7 @@ This allows you to have both a global configuration in a parent project and spec
 Default value: `config/pmd.xml` +
 Property: `coan.pmd.configPath`
 
-pmdConfigPath::
+checkstyleConfigPath::
 The path to the Checkstyle configuration file.
 This can be an absolute or relative path.
 If the path is relative, then the plugin tries to resolve it against the base path of the project or module that it is analysing.
