@@ -65,6 +65,11 @@
           <groupId>ch.qos.logback</groupId>
           <artifactId>*</artifactId>
         </exclusion>
+        <exclusion>
+          <!-- protobuf-java 3.7.1 has vulnerabilities: CVE-2021-22569. -->
+          <groupId>com.google.protobuf</groupId>
+          <artifactId>protobuf-java</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
@@ -90,6 +95,12 @@
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
       <version>1.2.10</version>
+    </dependency>
+    <dependency>
+      <!-- Remove this dependency once pmd-scala does not depend on a version with vulnerabilities anymore. -->
+      <groupId>com.google.protobuf</groupId>
+      <artifactId>protobuf-java</artifactId>
+      <version>3.19.4</version>
     </dependency>
     <dependency>
       <groupId>com.puppycrawl.tools</groupId>
@@ -285,7 +296,7 @@
       <plugin>
         <groupId>org.owasp</groupId>
         <artifactId>dependency-check-maven</artifactId>
-        <version>6.5.3</version>
+        <version>7.0.0</version>
         <executions>
           <execution>
             <goals>
@@ -397,7 +408,7 @@
           <plugin>
             <groupId>org.sonatype.plugins</groupId>
             <artifactId>nexus-staging-maven-plugin</artifactId>
-            <version>1.6.11</version>
+            <version>1.6.12</version>
             <extensions>true</extensions>
             <configuration>
               <serverId>ossrh</serverId>
