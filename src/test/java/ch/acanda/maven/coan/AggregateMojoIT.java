@@ -55,8 +55,8 @@ public class AggregateMojoIT {
         assertThat(project).out().warn().containsSubsequence(
             "Checkstyle found 2 issues in aggregate-module-1:",
             getPathForJavaSource("module1", "Hello.java"),
-            " [LineLengthCheck] Line is longer than 35 characters (found 51). (Hello.java:2)",
-            " [LineLengthCheck] Line is longer than 35 characters (found 36). (Hello.java:3)"
+            " [LineLengthCheck] Line is longer than 35 characters, found 51. (Hello.java:2)",
+            " [LineLengthCheck] Line is longer than 35 characters, found 36. (Hello.java:3)"
         );
         assertThat(project).out().warn().containsSubsequence(
             "PMD found 1 issue in aggregate-module-2:",
@@ -66,8 +66,8 @@ public class AggregateMojoIT {
         assertThat(project).out().warn().containsSubsequence(
             "Checkstyle found 2 issues in aggregate-module-2:",
             getPathForJavaSource("module2", "World.java"),
-            " [LineLengthCheck] Line is longer than 35 characters (found 51). (World.java:2)",
-            " [LineLengthCheck] Line is longer than 35 characters (found 36). (World.java:3)"
+            " [LineLengthCheck] Line is longer than 35 characters, found 51. (World.java:2)",
+            " [LineLengthCheck] Line is longer than 35 characters, found 36. (World.java:3)"
         );
         assertThat(project).out().warn().contains("The following report formats are invalid and are ignored: xyz");
     }

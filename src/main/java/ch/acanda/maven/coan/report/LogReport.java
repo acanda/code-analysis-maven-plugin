@@ -47,10 +47,12 @@ public class LogReport {
         final Path fileName = issue.getFile().getFileName();
         final int line = issue.getLine();
         final String name = issue.getName();
-        // Ensure that the description ends in a period. We need the period
-        // because IntelliJ only creates links if it finds the pattern
-        // ". (fileName:line)" in the console.
-        final String description = ensurePeriod(issue.getDescription());
+        // Ensure that the description ends in a period and does not contain
+        // parentheses. We need the period because IntelliJ only creates links
+        // if it finds the pattern ". (fileName:line)" in the console.
+        final String description = ensurePeriod(issue.getDescription())
+            .replaceAll("\\s*\\(", ", ")
+            .replaceAll("\\)", "");
         return format(ENGLISH, issueTemplate, name, description, fileName, line);
     }
 

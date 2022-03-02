@@ -42,8 +42,8 @@ public class AnalyseMojoIT {
         assertThat(project).out().warn().containsSubsequence(
             "Checkstyle found 2 issues in analyse:",
             getPathForJavaSource("Hello.java"),
-            " [LineLengthCheck] Line is longer than 35 characters (found 51). (Hello.java:2)",
-            " [LineLengthCheck] Line is longer than 35 characters (found 36). (Hello.java:3)"
+            " [LineLengthCheck] Line is longer than 35 characters, found 51. (Hello.java:2)",
+            " [LineLengthCheck] Line is longer than 35 characters, found 36. (Hello.java:3)"
         );
     }
 
