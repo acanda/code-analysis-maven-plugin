@@ -94,7 +94,7 @@
       <!-- Remove this dependency once pmd-dist does not depend on a version with vulnerabilities anymore. -->
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
-      <version>1.2.10</version>
+      <version>1.2.11</version>
     </dependency>
     <dependency>
       <!-- Remove this dependency once pmd-scala does not depend on a version with vulnerabilities anymore. -->
