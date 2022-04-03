@@ -20,8 +20,8 @@
     <maven.version>3.8.5</maven.version>
     <junit.version>5.8.2</junit.version>
     <itf.version>0.11.0</itf.version>
-    <checkstyle.version>10.0</checkstyle.version>
-    <pmd.version>6.43.0</pmd.version>
+    <checkstyle.version>10.1</checkstyle.version>
+    <pmd.version>6.44.0</pmd.version>
     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     <sonar.organization>acanda</sonar.organization>
     <sonar.projectKey>acanda_code-analysis-maven-plugin</sonar.projectKey>
@@ -56,16 +56,6 @@
           <artifactId>commons-io</artifactId>
         </exclusion>
         <exclusion>
-          <!-- ant 1.10.9 has vulnerabilities: CVE-2020-1945, CVE-2021-36373, CVE-2021-36374. -->
-          <groupId>org.apache.ant</groupId>
-          <artifactId>ant</artifactId>
-        </exclusion>
-        <exclusion>
-          <!-- logback 1.2.3 has vulnerabilities: CVE-2021-42550. -->
-          <groupId>ch.qos.logback</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-        <exclusion>
           <!-- protobuf-java 3.7.1 has vulnerabilities: CVE-2021-22569. -->
           <groupId>com.google.protobuf</groupId>
           <artifactId>protobuf-java</artifactId>
@@ -77,24 +67,6 @@
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
       <version>2.11.0</version>
-    </dependency>
-    <dependency>
-      <!-- Remove this dependency once pmd-dist does not depend on a version with vulnerabilities anymore. -->
-      <groupId>org.apache.ant</groupId>
-      <artifactId>ant</artifactId>
-      <version>1.10.12</version>
-    </dependency>
-    <dependency>
-      <!-- Remove this dependency once pmd-dist does not depend on a version with vulnerabilities anymore. -->
-      <groupId>ch.qos.logback</groupId>
-      <artifactId>logback-core</artifactId>
-      <version>1.2.11</version>
-    </dependency>
-    <dependency>
-      <!-- Remove this dependency once pmd-dist does not depend on a version with vulnerabilities anymore. -->
-      <groupId>ch.qos.logback</groupId>
-      <artifactId>logback-classic</artifactId>
-      <version>1.2.11</version>
     </dependency>
     <dependency>
       <!-- Remove this dependency once pmd-scala does not depend on a version with vulnerabilities anymore. -->
