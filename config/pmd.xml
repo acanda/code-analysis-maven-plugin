@@ -49,6 +49,12 @@
       <property name="violationSuppressRegex" value=".*'equals\(Object\)'.*"/>
     </properties>
   </rule>
+  <rule ref="category/java/design.xml/ImmutableField">
+    <properties>
+      <property name="ignoredAnnotations"
+                value="lombok.Setter|lombok.Getter|lombok.Builder|lombok.Data|lombok.RequiredArgsConstructor|lombok.AllArgsConstructor|lombok.Value|lombok.NoArgsConstructor|org.apache.maven.plugins.annotations.Parameter"/>
+    </properties>
+  </rule>
   <rule ref="category/java/design.xml/NPathComplexity">
     <properties>
       <property name="violationSuppressRegex" value=".*'equals\(Object\)'.*"/>
