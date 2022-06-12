@@ -73,7 +73,7 @@
       <!-- Remove this dependency once pmd-scala does not depend on a version with vulnerabilities anymore. -->
       <groupId>com.google.protobuf</groupId>
       <artifactId>protobuf-java</artifactId>
-      <version>3.20.1</version>
+      <version>3.21.1</version>
     </dependency>
     <dependency>
       <groupId>com.puppycrawl.tools</groupId>
@@ -136,7 +136,7 @@
     <dependency>
       <groupId>org.assertj</groupId>
       <artifactId>assertj-core</artifactId>
-      <version>3.22.0</version>
+      <version>3.23.1</version>
       <scope>test</scope>
     </dependency>
     <dependency>
