@@ -73,7 +73,7 @@
       <!-- Remove this dependency once pmd-scala does not depend on a version with vulnerabilities anymore. -->
       <groupId>com.google.protobuf</groupId>
       <artifactId>protobuf-java</artifactId>
-      <version>3.21.1</version>
+      <version>3.21.2</version>
     </dependency>
     <dependency>
       <groupId>com.puppycrawl.tools</groupId>
