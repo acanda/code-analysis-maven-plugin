@@ -19,6 +19,7 @@ public class AnalyseMojoIT {
         final MavenProjectResultAssert target = assertThat(project).isSuccessful().project().hasTarget();
         target.withFile("code-analysis/report.html").exists();
         target.withFile("code-analysis/report.gitlab.json").exists();
+        target.withFile("code-analysis/report.github.md").exists();
         assertThat(project).out().info().anyMatch(line -> line.matches("PMD \\d+\\.\\d+\\.\\d+"));
         assertThat(project).out().info().anyMatch(line -> line.matches("Checkstyle \\d+\\.\\d+(\\.\\d+)?"));
         assertThat(project).out().info().contains("PMD did not find any issues in analyse.");
@@ -32,6 +33,7 @@ public class AnalyseMojoIT {
             .project().hasTarget();
         target.withFile("code-analysis/report.html").exists();
         target.withFile("code-analysis/report.gitlab.json").exists();
+        target.withFile("code-analysis/report.github.md").exists();
         assertThat(project).out().info().anyMatch(line -> line.matches("PMD \\d+\\.\\d+\\.\\d+"));
         assertThat(project).out().info().anyMatch(line -> line.matches("Checkstyle \\d+\\.\\d+(\\.\\d+)?"));
         assertThat(project).out().warn().containsSubsequence(

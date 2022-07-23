@@ -2,6 +2,7 @@ package ch.acanda.maven.coan;
 
 import ch.acanda.maven.coan.checkstyle.CheckstyleConfig;
 import ch.acanda.maven.coan.pmd.PmdConfig;
+import ch.acanda.maven.coan.report.GitHubReport;
 import ch.acanda.maven.coan.report.GitLabReport;
 import ch.acanda.maven.coan.report.HtmlReport;
 import ch.acanda.maven.coan.version.Versions;
@@ -21,6 +22,7 @@ abstract class AbstractCoanMojo extends AbstractMojo {
 
     private static final String REPORT_FORMAT_HTML = "html";
     private static final String REPORT_FORMAT_GITLAB = "gitlab";
+    private static final String REPORT_FORMAT_GITHUB = "github";
     private static final String DEFAULT_SKIP = "false";
     private static final String DEFAULT_FAIL_ON_ISSUES = "true";
     private static final String DEFAULT_TARGET_PATH = "${project.build.directory}/code-analysis";
@@ -102,6 +104,12 @@ abstract class AbstractCoanMojo extends AbstractMojo {
             final Path reportFile = targetDir.resolve("report.gitlab.json");
             report.writeTo(reportFile);
             getLog().info("The GitLab Code Quality report is available at " + reportFile);
+        }
+        if (reportFormats.remove(REPORT_FORMAT_GITHUB)) {
+            final GitHubReport report = new GitHubReport(getProject(), baseDir, analyses);
+            final Path reportFile = targetDir.resolve("report.github.md");
+            report.writeTo(reportFile);
+            getLog().info("The GitHub Code Quality report is available at " + reportFile);
         }
         if (!reportFormats.isEmpty()) {
             final String invalidFormats = String.join(", ", reportFormats);

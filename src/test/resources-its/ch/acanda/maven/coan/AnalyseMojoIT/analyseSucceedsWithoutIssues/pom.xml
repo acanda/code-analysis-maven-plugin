@@ -30,7 +30,7 @@
               <goal>analyse</goal>
             </goals>
             <configuration>
-              <reportFormats>html,gitlab</reportFormats>
+              <reportFormats>html,gitlab,github</reportFormats>
             </configuration>
           </execution>
         </executions>
