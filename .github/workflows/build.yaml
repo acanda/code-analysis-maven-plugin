@@ -21,5 +21,4 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
       - name: Build with Maven
         run: |
-          mvn -B verify --file pom.xml -Dcoan.report.formats=github
-          cat target/code-analysis/report.github.md >> $GITHUB_STEP_SUMMARY
+          mvn -B verify --file pom.xml
