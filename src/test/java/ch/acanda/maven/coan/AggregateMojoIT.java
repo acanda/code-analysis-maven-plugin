@@ -19,11 +19,13 @@ public class AggregateMojoIT {
     @MavenTest
     @MavenGoal("ch.acanda.maven:code-analysis-maven-plugin:aggregate")
     @SystemProperty(value = "coan.report.formats", content = "html,gitlab,github")
+    @SystemProperty(value = "GITHUB_STEP_SUMMARY", content = "target/summary.md")
     public void aggregateSucceedsWithoutIssues(final MavenExecutionResult project) {
         final MavenProjectResultAssert target = assertThat(project).isSuccessful().project().hasTarget();
         target.withFile("code-analysis/report.html").exists();
         target.withFile("code-analysis/report.gitlab.json").exists();
         target.withFile("code-analysis/report.github.md").exists();
+        target.withFile("summary.md").exists();
         assertThat(project).out().info().anyMatch(line -> line.matches("PMD \\d+\\.\\d+\\.\\d+"));
         assertThat(project).out().info().anyMatch(line -> line.matches("Checkstyle \\d+\\.\\d+(\\.\\d+)?"));
         assertThat(project).out().info().contains("PMD did not find any issues in aggregate.");
@@ -39,12 +41,13 @@ public class AggregateMojoIT {
     @MavenTest
     @MavenGoal("ch.acanda.maven:code-analysis-maven-plugin:aggregate")
     @SystemProperty(value = "coan.report.formats", content = "html,gitlab,github,xyz")
+    @SystemProperty(value = "GITHUB_STEP_SUMMARY", content = "target/summary.md")
     public void aggregateFailsWithIssues(final MavenExecutionResult project) {
-        final MavenProjectResultAssert target = assertThat(project).isFailure()
-            .project().hasTarget();
+        final MavenProjectResultAssert target = assertThat(project).isFailure().project().hasTarget();
         target.withFile("code-analysis/report.html").exists();
         target.withFile("code-analysis/report.gitlab.json").exists();
         target.withFile("code-analysis/report.github.md").exists();
+        target.withFile("summary.md").exists();
         assertThat(project).out().info().anyMatch(line -> line.matches("PMD \\d+\\.\\d+\\.\\d+"));
         assertThat(project).out().info().anyMatch(line -> line.matches("Checkstyle \\d+\\.\\d+(\\.\\d+)?"));
         assertThat(project).out().info().contains("PMD did not find any issues in aggregate.");

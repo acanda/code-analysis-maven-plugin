@@ -4,6 +4,7 @@ import com.soebes.itf.extension.assertj.MavenProjectResultAssert;
 import com.soebes.itf.jupiter.extension.MavenGoal;
 import com.soebes.itf.jupiter.extension.MavenJupiterExtension;
 import com.soebes.itf.jupiter.extension.MavenTest;
+import com.soebes.itf.jupiter.extension.SystemProperty;
 import com.soebes.itf.jupiter.maven.MavenExecutionResult;
 
 import java.io.File;
@@ -15,11 +16,13 @@ public class AnalyseMojoIT {
 
     @MavenTest
     @MavenGoal("verify")
+    @SystemProperty(value = "GITHUB_STEP_SUMMARY", content = "target/summary.md")
     public void analyseSucceedsWithoutIssues(final MavenExecutionResult project) {
         final MavenProjectResultAssert target = assertThat(project).isSuccessful().project().hasTarget();
         target.withFile("code-analysis/report.html").exists();
         target.withFile("code-analysis/report.gitlab.json").exists();
         target.withFile("code-analysis/report.github.md").exists();
+        target.withFile("summary.md").exists();
         assertThat(project).out().info().anyMatch(line -> line.matches("PMD \\d+\\.\\d+\\.\\d+"));
         assertThat(project).out().info().anyMatch(line -> line.matches("Checkstyle \\d+\\.\\d+(\\.\\d+)?"));
         assertThat(project).out().info().contains("PMD did not find any issues in analyse.");
@@ -28,12 +31,13 @@ public class AnalyseMojoIT {
 
     @MavenTest
     @MavenGoal("verify")
+    @SystemProperty(value = "GITHUB_STEP_SUMMARY", content = "target/summary.md")
     public void analyseFailsWithIssues(final MavenExecutionResult project) {
-        final MavenProjectResultAssert target = assertThat(project).isFailure()
-            .project().hasTarget();
+        final MavenProjectResultAssert target = assertThat(project).isFailure().project().hasTarget();
         target.withFile("code-analysis/report.html").exists();
         target.withFile("code-analysis/report.gitlab.json").exists();
         target.withFile("code-analysis/report.github.md").exists();
+        target.withFile("summary.md").exists();
         assertThat(project).out().info().anyMatch(line -> line.matches("PMD \\d+\\.\\d+\\.\\d+"));
         assertThat(project).out().info().anyMatch(line -> line.matches("Checkstyle \\d+\\.\\d+(\\.\\d+)?"));
         assertThat(project).out().warn().containsSubsequence(

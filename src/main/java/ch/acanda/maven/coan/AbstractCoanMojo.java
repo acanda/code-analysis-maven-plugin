@@ -93,7 +93,7 @@ abstract class AbstractCoanMojo extends AbstractMojo {
     protected void createReports(final Analysis... analyses) throws MojoFailureException {
         final Path baseDir = getProject().getBasedir().toPath();
         final Path targetDir = Paths.get(getTargetPath());
-        final String gitHubStepSummary = System.getenv("GITHUB_STEP_SUMMARY");
+        final String gitHubStepSummary = getGithubStepSummary();
         if (gitHubStepSummary != null) {
             final GitHubReport report = new GitHubReport(getProject(), baseDir, analyses);
             final Path reportFile = Paths.get(gitHubStepSummary);
@@ -122,6 +122,11 @@ abstract class AbstractCoanMojo extends AbstractMojo {
             final String invalidFormats = String.join(", ", reportFormats);
             getLog().warn("The following report formats are invalid and are ignored: " + invalidFormats);
         }
+    }
+
+    private String getGithubStepSummary() {
+        final String property = System.getProperty("GITHUB_STEP_SUMMARY");
+        return property != null ? property : System.getenv("GITHUB_STEP_SUMMARY");
     }
 
 }
