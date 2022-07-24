@@ -93,6 +93,13 @@ abstract class AbstractCoanMojo extends AbstractMojo {
     protected void createReports(final Analysis... analyses) throws MojoFailureException {
         final Path baseDir = getProject().getBasedir().toPath();
         final Path targetDir = Paths.get(getTargetPath());
+        final String gitHubStepSummary = System.getenv("GITHUB_STEP_SUMMARY");
+        if (gitHubStepSummary != null) {
+            final GitHubReport report = new GitHubReport(getProject(), baseDir, analyses);
+            final Path reportFile = Paths.get(gitHubStepSummary);
+            report.appendTo(reportFile);
+            getLog().info("The GitHub Code Quality report was appended to the GitHub step summary file " + reportFile);
+        }
         if (reportFormats.remove(REPORT_FORMAT_HTML)) {
             final HtmlReport report = new HtmlReport(getProject(), baseDir, analyses);
             final Path reportFile = targetDir.resolve("report.html");

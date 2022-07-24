@@ -128,18 +128,20 @@ Property: `coan.targetPath`
 reportFormats::
 The plugin can create reports in different formats.
 This parameter contains a comma separated list of formats.
+The plugin detects when it is run as part of a GitHub workflow and automatically appends the report to the job's summary.
 +
 Default value: `html` +
 Property: `coan.report.formats` +
 +
-The supported formats are `html` and `gitlab`:
+The supported formats are `html`, `gitlab` and `github`:
 
 html:::
 Creates an HTML report `report.html` that lists all issues the plugin found.
 gitlab:::
 Creates a GitLab Code Quality report `report.gitlab.json` that you can attach as an artifact to your GitLab CI/CD job so the issues the plugin found are summarized in merge requests and the pipeline view, see https://docs.gitlab.com/ee/ci/yaml/index.html#artifactsreportscodequality[artifacts:reports:codequality].
 github:::
-Creates a GitHub Code Quality report `report.github.md` that you can add to the job summary environment variable with `cat target/code-analysis/report.github.md >> $GITHUB_STEP_SUMMARY` in your workflow job.
+The plugin detects when it is run as part of a GitHub workflow and automatically appends the report to the job's summary without adding this format.
+You only have to add `github` if you want to store the report in `report.github.md`.
 
 == Build Status
 

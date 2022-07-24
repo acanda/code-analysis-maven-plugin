@@ -16,6 +16,9 @@ import java.util.LongSummaryStatistics;
 import java.util.Map;
 import java.util.TreeMap;
 
+import static java.nio.file.StandardOpenOption.APPEND;
+import static java.nio.file.StandardOpenOption.CREATE;
+import static java.nio.file.StandardOpenOption.WRITE;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.summarizingLong;
@@ -40,6 +43,14 @@ public class GitHubReport {
             writeTo(out);
         } catch (final IOException e) {
             throw new MojoFailureException("Failed to write GitHub report to file " + file + ".", e);
+        }
+    }
+
+    public void appendTo(final Path file) throws MojoFailureException {
+        try (Writer out = Files.newBufferedWriter(file, CREATE, WRITE, APPEND)) {
+            writeTo(out);
+        } catch (final IOException e) {
+            throw new MojoFailureException("Failed to append GitHub report to file " + file + ".", e);
         }
     }
 
