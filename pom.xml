@@ -4,7 +4,7 @@
   <groupId>ch.acanda.maven</groupId>
   <artifactId>code-analysis-maven-plugin</artifactId>
   <name>Coan - Code Analysis Maven Plugin</name>
-  <version>0.14.0</version>
+  <version>0.15.0-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
   <description>
@@ -466,7 +466,7 @@
     <connection>scm:git:git@github.com:acanda/code-analysis-maven-plugin.git</connection>
     <developerConnection>scm:git:git@github.com:acanda/code-analysis-maven-plugin.git</developerConnection>
     <url>https://github.com/acanda/code-analysis-maven-plugin.git</url>
-    <tag>release/0.14.0</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <issueManagement>
