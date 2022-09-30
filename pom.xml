@@ -21,7 +21,7 @@
     <junit.version>5.9.1</junit.version>
     <itf.version>0.11.0</itf.version>
     <checkstyle.version>10.3.3</checkstyle.version>
-    <pmd.version>6.49.0</pmd.version>
+    <pmd.version>6.50.0</pmd.version>
     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     <sonar.organization>acanda</sonar.organization>
     <sonar.projectKey>acanda_code-analysis-maven-plugin</sonar.projectKey>
@@ -51,40 +51,7 @@
           <groupId>com.beust</groupId>
           <artifactId>jcommander</artifactId>
         </exclusion>
-        <exclusion>
-          <!-- protobuf-java 3.7.1 has vulnerabilities: CVE-2021-22569. -->
-          <groupId>com.google.protobuf</groupId>
-          <artifactId>protobuf-java</artifactId>
-        </exclusion>
-        <exclusion>
-          <!-- jsoup 1.14.3 has vulnerabilities: CVE-2022-36033. -->
-          <groupId>org.jsoup</groupId>
-          <artifactId>jsoup</artifactId>
-        </exclusion>
-        <exclusion>
-          <!-- snakeyaml 1.30 has vulnerabilities: CVE-2022-25857. -->
-          <groupId>org.yaml</groupId>
-          <artifactId>snakeyaml</artifactId>
-        </exclusion>
       </exclusions>
-    </dependency>
-    <dependency>
-      <!-- Remove this dependency once pmd-scala does not depend on a version with vulnerabilities anymore. -->
-      <groupId>com.google.protobuf</groupId>
-      <artifactId>protobuf-java</artifactId>
-      <version>3.21.5</version>
-    </dependency>
-    <dependency>
-      <!-- Remove this dependency once pmd-html does not depend on a version with vulnerabilities anymore. -->
-      <groupId>org.jsoup</groupId>
-      <artifactId>jsoup</artifactId>
-      <version>1.15.3</version>
-    </dependency>
-    <dependency>
-      <!-- Remove this dependency once pmd-apex does not depend on a version with vulnerabilities anymore. -->
-      <groupId>org.yaml</groupId>
-      <artifactId>snakeyaml</artifactId>
-      <version>1.32</version>
     </dependency>
     <dependency>
       <groupId>com.puppycrawl.tools</groupId>
