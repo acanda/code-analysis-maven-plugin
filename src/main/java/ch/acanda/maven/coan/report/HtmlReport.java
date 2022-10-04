@@ -158,34 +158,42 @@ public class HtmlReport {
     }
 
     private static void writeHead(final PrintWriter html) {
-        html.println("<head>");
-        html.println("<meta charset=\"utf-8\">");
-        html.println("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">");
-        html.println("<title>Code Analysis Report</title>");
-        html.println("<style type=\"text/css\">");
-        html.println("* { font-family: sans-serif; }");
-        html.println("html, body { background-color: #f8f8f8; margin: 0; padding: 0; }");
-        html.println("h1 { font-size: 1.728em; background-color: white; border-bottom: 0.1em solid #D50000; "
-                     + "padding: 0.5em 1em; margin-top: 0; box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);}");
-        html.println("h2 { font-size: 1.44em; }");
-        html.println("h3 { font-size: 1.2em; }");
-        html.println("section { box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); border-radius: 0.3em; "
-                     + "background-color: white; padding: 0.2em 0.7em; margin: 1em; }");
-        html.println("section section { box-shadow: none; }");
-        html.println("details { margin: 1em 0; }");
-        html.println("summary { font-size: 1.44em; font-weight: bold }");
-        html.println("ul { list-style-position: inside; list-style-type: none; padding-left: 0; }");
-        html.println("li { margin: 0.5em 0; }");
-        html.println(".label { font-size: 0.9em; font-variant: small-caps; "
-                     + "border-radius: 0.3em; padding: 0.2em 0.4em; margin-right: 0.5em; }");
-        html.println(".label.ignore { background-color: #757575; color: white; }");
-        html.println(".label.lowest { background-color: #546E7A; color: white; }");
-        html.println(".label.low { background-color: #2962FF; color: white; }");
-        html.println(".label.medium { background-color: #FFD600; color: black; }");
-        html.println(".label.high { background-color: #FFAB00; color: black; }");
-        html.println(".label.highest { background-color: #D50000; color: white; }");
-        html.println("</style>");
-        html.println("</head>");
+        html.println("""
+            <head>
+            <meta charset="utf-8"/>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+            <title>Code Analysis Report</title>
+            <style type="text/css">
+              * { font-family: sans-serif; }
+              html, body { background-color: #f8f8f8; margin: 0; padding: 0; }
+              h1 {
+                font-size: 1.728em; background-color: white; border-bottom: 0.1em solid #D50000;
+                padding: 0.5em 1em; margin-top: 0; box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+              }
+              h2 { font-size: 1.44em; }
+              h3 { font-size: 1.2em; }
+              section {
+                box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); border-radius: 0.3em; background-color: white;
+                padding: 0.2em 0.7em; margin: 1em;
+              }
+              section section { box-shadow: none; }
+              details { margin: 1em 0; }
+              summary { font-size: 1.44em; font-weight: bold }
+              ul { list-style-position: inside; list-style-type: none; padding-left: 0; }
+              li { margin: 0.5em 0; }
+              .label {
+                font-size: 0.9em; font-variant: small-caps; border-radius: 0.3em;
+                padding: 0.2em 0.4em; margin-right: 0.5em;
+              }
+              .label.ignore { background-color: #757575; color: white; }
+              .label.lowest { background-color: #546E7A; color: white; }
+              .label.low { background-color: #2962FF; color: white; }
+              .label.medium { background-color: #FFD600; color: black; }
+              .label.high { background-color: #FFAB00; color: black; }
+              .label.highest { background-color: #D50000; color: white; }
+            </style>
+            </head>
+            """);
     }
 
     private static void writeIssue(final Issue issue, final PrintWriter html) {
