@@ -73,21 +73,11 @@ abstract class AbstractCoanMojo extends AbstractMojo {
     protected abstract void analyseCode() throws MojoFailureException;
 
     protected PmdConfig assemblePmdConfig(final MavenProject project) {
-        return PmdConfig.builder()
-            .project(project)
-            .log(getLog())
-            .configPath(getPmdConfigPath())
-            .targetPath(getTargetPath())
-            .build();
+        return new PmdConfig(project, getLog(), getPmdConfigPath(), getTargetPath());
     }
 
     protected CheckstyleConfig assembleCheckstyleConfig(final MavenProject project) {
-        return CheckstyleConfig.builder()
-            .project(project)
-            .log(getLog())
-            .configPath(getCheckstyleConfigPath())
-            .targetPath(getTargetPath())
-            .build();
+        return new CheckstyleConfig(project, getLog(), getCheckstyleConfigPath(), getTargetPath());
     }
 
     protected void createReports(final Analysis... analyses) throws MojoFailureException {

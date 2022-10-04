@@ -59,12 +59,12 @@ public class GitLabReport {
                     .startArray();
 
             for (final Analysis analysis : analyses) {
-                for (final Issue issue : analysis.getIssues()) {
+                for (final Issue issue : analysis.issues()) {
                     composeIssue(json, analysis, issue);
                 }
             }
 
-            json.end().finish();
+            json.end().finish().close();
         } catch (final IOException e) {
             throw new MojoFailureException("Failed to write Gitlab Code Quality report to file " + file + ".", e);
         }
@@ -74,17 +74,17 @@ public class GitLabReport {
     private void composeIssue(final ArrayComposer<JSONComposer<OutputStream>> json, final Analysis analysis,
         final Issue issue) throws IOException {
         final String description =
-            format(Locale.ENGLISH, "%s [%s]: %s", analysis.getToolName(), issue.getName(), issue.getDescription());
-        final String path = baseDir.relativize(issue.getFile()).toString().replace('\\', '/');
-        final String fingerprint = createFingerprint(issue.getName(), path, issue.getLine(), issue.getColumn());
+            format(Locale.ENGLISH, "%s [%s]: %s", analysis.toolName(), issue.name(), issue.description());
+        final String path = baseDir.relativize(issue.file()).toString().replace('\\', '/');
+        final String fingerprint = createFingerprint(issue.name(), path, issue.line(), issue.column());
         json.startObject()
             .put("description", description)
             .put("fingerprint", fingerprint)
-            .put("severity", SEVERITIES.get(issue.getSeverity()))
+            .put("severity", SEVERITIES.get(issue.severity()))
             .startObjectField("location")
             .put("path", path)
             .startObjectField("lines")
-            .put("begin", issue.getLine())
+            .put("begin", issue.line())
             .end()
             .end()
             .end();

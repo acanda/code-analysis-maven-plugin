@@ -75,7 +75,7 @@ public class HtmlReport {
         if (foundIssues) {
             html.println("<h2>Summary</h2>");
             analyses.stream()
-                .collect(groupingBy(Analysis::getToolName, summarizingLong(Analysis::getNumberOfIssues)))
+                .collect(groupingBy(Analysis::toolName, summarizingLong(Analysis::getNumberOfIssues)))
                 .entrySet()
                 .stream()
                 .map(entry -> escapeHtml4(entry.getKey()) + " found " + numberOfIssues(entry.getValue()) + ".")
@@ -95,7 +95,7 @@ public class HtmlReport {
     private void writeAnalyses(final PrintWriter html) {
         final Map<MavenProject, List<Analysis>> analysesByProject = analyses.stream()
             .filter(Analysis::foundIssues)
-            .collect(groupingBy(Analysis::getProject));
+            .collect(groupingBy(Analysis::project));
         final boolean includeProjectName = analysesByProject.size() > 1;
         analysesByProject
             .entrySet()
@@ -123,11 +123,11 @@ public class HtmlReport {
     private void writeAnalysis(final Analysis analysis, final PrintWriter html) {
         html.println("<section>");
         html.print("<h2>");
-        html.print(escapeHtml4(analysis.getToolName()));
+        html.print(escapeHtml4(analysis.toolName()));
         html.println(" Report</h2>");
-        analysis.getIssues()
+        analysis.issues()
             .stream()
-            .collect(groupingBy(Issue::getFile))
+            .collect(groupingBy(Issue::file))
             .forEach((file, issues) -> writeIssues(file, issues, html));
         html.println("</section>");
     }
@@ -138,10 +138,10 @@ public class HtmlReport {
         html.println("</h3>");
         html.println("<ul>");
         issues.stream()
-            .sorted(comparing(Issue::getSeverity)
-                .thenComparing(Issue::getName)
-                .thenComparing(Issue::getLine)
-                .thenComparing(Issue::getColumn))
+            .sorted(comparing(Issue::severity)
+                .thenComparing(Issue::name)
+                .thenComparing(Issue::line)
+                .thenComparing(Issue::column))
             .forEachOrdered(issue -> writeIssue(issue, html));
         html.println("</ul>");
     }
@@ -198,15 +198,15 @@ public class HtmlReport {
 
     private static void writeIssue(final Issue issue, final PrintWriter html) {
         html.print("<li><span class=\"label ");
-        html.print(issue.getSeverity().getName());
+        html.print(issue.severity().getName());
         html.print("\">");
-        html.print(escapeHtml4(issue.getName()));
+        html.print(escapeHtml4(issue.name()));
         html.print("</span> ");
-        html.print(escapeHtml4(issue.getDescription()));
+        html.print(escapeHtml4(issue.description()));
         html.print(" (");
-        html.print(issue.getLine());
+        html.print(issue.line());
         html.print(':');
-        html.print(issue.getColumn());
+        html.print(issue.column());
         html.println(")</li>");
     }
 

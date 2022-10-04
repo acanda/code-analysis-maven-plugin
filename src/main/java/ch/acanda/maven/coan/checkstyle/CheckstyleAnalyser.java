@@ -35,13 +35,12 @@ public class CheckstyleAnalyser {
 
     public CheckstyleAnalyser(final CheckstyleConfig config) {
         this.config = config;
-        log = config.getLog();
+        log = config.log();
     }
 
     public Analysis analyse() throws MojoFailureException {
         try {
-            final Path configPath = Configs.resolve("Checkstyle", config.getConfigPath(), config.getProject(),
-                config.getLog());
+            final Path configPath = Configs.resolve("Checkstyle", config.configPath(), config.project(), config.log());
 
             final Configuration configuration = ConfigurationLoader.loadConfiguration(
                 configPath.toString(),
@@ -64,7 +63,7 @@ public class CheckstyleAnalyser {
             }
             rootModule.process(files);
 
-            return new CheckstyleAnalysis(config.getProject(), issueCollector.getIssues());
+            return new CheckstyleAnalysis(config.project(), issueCollector.getIssues());
 
         } catch (final CheckstyleException e) {
             throw new MojoFailureException("Failed to run Checkstyle.", e);
@@ -72,7 +71,7 @@ public class CheckstyleAnalyser {
     }
 
     private List<File> getFiles() {
-        final Build build = config.getProject().getBuild();
+        final Build build = config.project().getBuild();
         final Path sources = Paths.get(build.getSourceDirectory());
         final Path testSources = Paths.get(build.getTestSourceDirectory());
         return Stream.of(sources, testSources)

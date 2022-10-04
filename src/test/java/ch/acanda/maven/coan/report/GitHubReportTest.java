@@ -46,24 +46,26 @@ class GitHubReportTest {
         report.writeTo(reportFile);
 
         assertThat(Files.readString(reportFile, UTF_8).replaceAll("\\r?\\n", "\n")).isEqualTo(
-            "# Code Analysis for code-analysis-maven-plugin 1.0.0\n"
-            + "\n"
-            + "## Summary\n"
-            + "\n"
-            + "ABC found 6 issues.\n"
-            + "\n"
-            + "## ABC Report\n"
-            + "\n"
-            + "- src/main/java/Hello.java\n"
-            + "  - :bangbang: IssueA Issue A description (12:0)\n"
-            + "  - :grey_exclamation: IssueC Issue C description (7:0)\n"
-            + "  - :speak_no_evil: IssueE Issue E description (24:0)\n"
-            + "\n"
-            + "- src/main/java/World.java\n"
-            + "  - :exclamation: IssueB Issue B description (25:0)\n"
-            + "  - :warning: IssueD Issue D description (38:0)\n"
-            + "  - :information_source: IssueF Issue F description (15:0)\n"
-            + "\n");
+            """
+                # Code Analysis for code-analysis-maven-plugin 1.0.0
+
+                ## Summary
+
+                ABC found 6 issues.
+
+                ## ABC Report
+
+                - src/main/java/Hello.java
+                  - :bangbang: IssueA Issue A description (12:0)
+                  - :grey_exclamation: IssueC Issue C description (7:0)
+                  - :speak_no_evil: IssueE Issue E description (24:0)
+
+                - src/main/java/World.java
+                  - :exclamation: IssueB Issue B description (25:0)
+                  - :warning: IssueD Issue D description (38:0)
+                  - :information_source: IssueF Issue F description (15:0)
+
+                """);
     }
 
     private static Analysis analysis(final String tool, final List<? extends Issue> issues) {

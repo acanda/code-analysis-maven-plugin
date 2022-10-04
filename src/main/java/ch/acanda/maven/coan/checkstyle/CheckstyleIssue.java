@@ -2,57 +2,47 @@ package ch.acanda.maven.coan.checkstyle;
 
 import ch.acanda.maven.coan.Issue;
 import com.puppycrawl.tools.checkstyle.api.AuditEvent;
-import lombok.Data;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-@Data
-public class CheckstyleIssue implements Issue {
-
-    private final AuditEvent event;
+public record CheckstyleIssue(AuditEvent event) implements Issue {
 
     @Override
-    public Path getFile() {
+    public Path file() {
         return Paths.get(event.getFileName());
     }
 
     @Override
-    public int getLine() {
+    public int line() {
         return event.getLine();
     }
 
     @Override
-    public int getColumn() {
+    public int column() {
         return event.getColumn();
     }
 
     @Override
-    public String getName() {
+    public String name() {
         final String sourceName = event.getSourceName();
         final int pos = sourceName.lastIndexOf('.');
         return pos == -1 ? sourceName : sourceName.substring(pos + 1);
     }
 
     @Override
-    public String getDescription() {
+    public String description() {
         return event.getMessage();
     }
 
     @Override
-    public Severity getSeverity() {
-        switch (event.getSeverityLevel()) {
-            case ERROR:
-                return Severity.HIGHEST;
-            case WARNING:
-                return Severity.HIGH;
-            case INFO:
-                return Severity.MEDIUM;
-            case IGNORE:
-                return Severity.IGNORE;
-            default:
-                throw new IllegalStateException("Unexpected Checkstyle severity level: " + event.getSeverityLevel());
-        }
+    public Severity severity() {
+        return switch (event.getSeverityLevel()) {
+            case ERROR -> Severity.HIGHEST;
+            case WARNING -> Severity.HIGH;
+            case INFO -> Severity.MEDIUM;
+            case IGNORE -> Severity.IGNORE;
+        };
     }
 
 }

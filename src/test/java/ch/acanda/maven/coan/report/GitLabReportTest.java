@@ -43,74 +43,75 @@ class GitLabReportTest {
         report.writeTo(reportFile);
 
         assertThatJson(Files.readString(reportFile, UTF_8)).isEqualTo(
-            "[\n"
-            + "  {\n"
-            + "    \"description\": \"ABC [IssueA]: Issue A description\",\n"
-            + "    \"fingerprint\": \"64ca83ea-1e88-3657-8323-a931cde1f4e8\",\n"
-            + "    \"location\": {\n"
-            + "      \"lines\": {\n"
-            + "        \"begin\": 12\n"
-            + "      },\n"
-            + "      \"path\": \"src/main/java/Hello.java\"\n"
-            + "    },\n"
-            + "    \"severity\": \"blocker\"\n"
-            + "  },\n"
-            + "  {\n"
-            + "    \"description\": \"ABC [IssueB]: Issue B description\",\n"
-            + "    \"fingerprint\": \"7559b8af-f4f6-3f4b-937a-95bbcd303490\",\n"
-            + "    \"location\": {\n"
-            + "      \"lines\": {\n"
-            + "        \"begin\": 25\n"
-            + "      },\n"
-            + "      \"path\": \"src/main/java/World.java\"\n"
-            + "    },\n"
-            + "    \"severity\": \"critical\"\n"
-            + "  },\n"
-            + "  {\n"
-            + "    \"description\": \"ABC [IssueC]: Issue C description\",\n"
-            + "    \"fingerprint\": \"b1e44652-eb31-3411-bdae-3b97e7f63060\",\n"
-            + "    \"location\": {\n"
-            + "      \"lines\": {\n"
-            + "        \"begin\": 7\n"
-            + "      },\n"
-            + "      \"path\": \"src/main/java/Hello.java\"\n"
-            + "    },\n"
-            + "    \"severity\": \"major\"\n"
-            + "  },\n"
-            + "  {\n"
-            + "    \"description\": \"ABC [IssueD]: Issue D description\",\n"
-            + "    \"fingerprint\": \"9a78c4ab-5f02-3c4e-849e-d41857736094\",\n"
-            + "    \"location\": {\n"
-            + "      \"lines\": {\n"
-            + "        \"begin\": 38\n"
-            + "      },\n"
-            + "      \"path\": \"src/main/java/World.java\"\n"
-            + "    },\n"
-            + "    \"severity\": \"minor\"\n"
-            + "  },\n"
-            + "  {\n"
-            + "    \"description\": \"ABC [IssueE]: Issue E description\",\n"
-            + "    \"fingerprint\": \"0cc3d491-2b87-3cd3-ab12-7863c1acef71\",\n"
-            + "    \"location\": {\n"
-            + "      \"lines\": {\n"
-            + "        \"begin\": 24\n"
-            + "      },\n"
-            + "      \"path\": \"src/main/java/Hello.java\"\n"
-            + "    },\n"
-            + "    \"severity\": \"minor\"\n"
-            + "  },\n"
-            + "  {\n"
-            + "    \"description\": \"ABC [IssueF]: Issue F description\",\n"
-            + "    \"fingerprint\": \"b3c9e744-694b-3ff7-abb8-422c9e36fff3\",\n"
-            + "    \"location\": {\n"
-            + "      \"lines\": {\n"
-            + "        \"begin\": 15\n"
-            + "      },\n"
-            + "      \"path\": \"src/main/java/World.java\"\n"
-            + "    },\n"
-            + "    \"severity\": \"info\"\n"
-            + "  }\n"
-            + "]");
+            """
+                [
+                  {
+                    "description": "ABC [IssueA]: Issue A description",
+                    "fingerprint": "64ca83ea-1e88-3657-8323-a931cde1f4e8",
+                    "location": {
+                      "lines": {
+                        "begin": 12
+                      },
+                      "path": "src/main/java/Hello.java"
+                    },
+                    "severity": "blocker"
+                  },
+                  {
+                    "description": "ABC [IssueB]: Issue B description",
+                    "fingerprint": "7559b8af-f4f6-3f4b-937a-95bbcd303490",
+                    "location": {
+                      "lines": {
+                        "begin": 25
+                      },
+                      "path": "src/main/java/World.java"
+                    },
+                    "severity": "critical"
+                  },
+                  {
+                    "description": "ABC [IssueC]: Issue C description",
+                    "fingerprint": "b1e44652-eb31-3411-bdae-3b97e7f63060",
+                    "location": {
+                      "lines": {
+                        "begin": 7
+                      },
+                      "path": "src/main/java/Hello.java"
+                    },
+                    "severity": "major"
+                  },
+                  {
+                    "description": "ABC [IssueD]: Issue D description",
+                    "fingerprint": "9a78c4ab-5f02-3c4e-849e-d41857736094",
+                    "location": {
+                      "lines": {
+                        "begin": 38
+                      },
+                      "path": "src/main/java/World.java"
+                    },
+                    "severity": "minor"
+                  },
+                  {
+                    "description": "ABC [IssueE]: Issue E description",
+                    "fingerprint": "0cc3d491-2b87-3cd3-ab12-7863c1acef71",
+                    "location": {
+                      "lines": {
+                        "begin": 24
+                      },
+                      "path": "src/main/java/Hello.java"
+                    },
+                    "severity": "minor"
+                  },
+                  {
+                    "description": "ABC [IssueF]: Issue F description",
+                    "fingerprint": "b3c9e744-694b-3ff7-abb8-422c9e36fff3",
+                    "location": {
+                      "lines": {
+                        "begin": 15
+                      },
+                      "path": "src/main/java/World.java"
+                    },
+                    "severity": "info"
+                  }
+                ]""");
     }
 
     private static Analysis analysis(final String tool, final List<? extends Issue> issues) {

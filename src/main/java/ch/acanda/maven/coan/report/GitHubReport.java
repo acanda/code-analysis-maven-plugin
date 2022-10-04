@@ -83,7 +83,7 @@ public class GitHubReport {
             markdown.println("## Summary");
             markdown.println();
             analyses.stream()
-                .collect(groupingBy(Analysis::getToolName, summarizingLong(Analysis::getNumberOfIssues)))
+                .collect(groupingBy(Analysis::toolName, summarizingLong(Analysis::getNumberOfIssues)))
                 .entrySet()
                 .stream()
                 .map(entry -> escapeHtml4(entry.getKey()) + " found " + numberOfIssues(entry.getValue()) + ".")
@@ -103,7 +103,7 @@ public class GitHubReport {
     private void writeAnalyses(final PrintWriter markdown) {
         final Map<MavenProject, List<Analysis>> analysesByProject = analyses.stream()
             .filter(Analysis::foundIssues)
-            .collect(groupingBy(Analysis::getProject));
+            .collect(groupingBy(Analysis::project));
         final boolean includeProjectName = analysesByProject.size() > 1;
         analysesByProject
             .entrySet()
@@ -124,12 +124,12 @@ public class GitHubReport {
 
     private void writeAnalysis(final Analysis analysis, final boolean isLevel3, final PrintWriter markdown) {
         markdown.print(isLevel3 ? "### " : "## ");
-        markdown.print(escapeHtml4(analysis.getToolName()));
+        markdown.print(escapeHtml4(analysis.toolName()));
         markdown.println(" Report");
         markdown.println();
-        analysis.getIssues()
+        analysis.issues()
             .stream()
-            .collect(groupingBy(Issue::getFile, TreeMap::new, toList()))
+            .collect(groupingBy(Issue::file, TreeMap::new, toList()))
             .forEach((file, issues) -> writeIssues(file, issues, markdown));
     }
 
@@ -137,10 +137,10 @@ public class GitHubReport {
         markdown.print("- ");
         markdown.println(escapeHtml4(baseDir.relativize(file).toString().replace('\\', '/')));
         issues.stream()
-            .sorted(comparing(Issue::getSeverity)
-                .thenComparing(Issue::getName)
-                .thenComparing(Issue::getLine)
-                .thenComparing(Issue::getColumn))
+            .sorted(comparing(Issue::severity)
+                .thenComparing(Issue::name)
+                .thenComparing(Issue::line)
+                .thenComparing(Issue::column))
             .forEachOrdered(issue -> writeIssue(issue, markdown));
         markdown.println();
     }
@@ -158,34 +158,27 @@ public class GitHubReport {
 
     private static void writeIssue(final Issue issue, final PrintWriter markdown) {
         markdown.print("  - ");
-        markdown.print(getEmoji(issue.getSeverity()));
+        markdown.print(getEmoji(issue.severity()));
         markdown.print(" ");
-        markdown.print(escapeHtml4(issue.getName()));
+        markdown.print(escapeHtml4(issue.name()));
         markdown.print(" ");
-        markdown.print(escapeHtml4(issue.getDescription()));
+        markdown.print(escapeHtml4(issue.description()));
         markdown.print(" (");
-        markdown.print(issue.getLine());
+        markdown.print(issue.line());
         markdown.print(':');
-        markdown.print(issue.getColumn());
+        markdown.print(issue.column());
         markdown.println(")");
     }
 
     private static String getEmoji(final Issue.Severity severity) {
-        switch (severity) {
-            case HIGHEST:
-                return ":bangbang:";
-            case HIGH:
-                return ":exclamation:";
-            case MEDIUM:
-                return ":grey_exclamation:";
-            case LOW:
-                return ":warning:";
-            case LOWEST:
-                return ":speak_no_evil:";
-            case IGNORE:
-                return ":information_source:";
-            default:
-                return ":grey_question:";
-        }
+        return switch (severity) {
+            case HIGHEST -> ":bangbang:";
+            case HIGH -> ":exclamation:";
+            case MEDIUM -> ":grey_exclamation:";
+            case LOW -> ":warning:";
+            case LOWEST -> ":speak_no_evil:";
+            case IGNORE -> ":information_source:";
+            default -> ":grey_question:";
+        };
     }
 }

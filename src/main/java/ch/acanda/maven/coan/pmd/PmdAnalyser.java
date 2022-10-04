@@ -2,7 +2,6 @@ package ch.acanda.maven.coan.pmd;
 
 import ch.acanda.maven.coan.Analysis;
 import ch.acanda.maven.coan.Configs;
-import ch.acanda.maven.coan.PmdIssue;
 import net.sourceforge.pmd.PMD;
 import net.sourceforge.pmd.PMDConfiguration;
 import net.sourceforge.pmd.Report;
@@ -36,7 +35,7 @@ public class PmdAnalyser {
 
     public PmdAnalyser(final PmdConfig config) {
         this.config = config;
-        log = config.getLog();
+        log = config.log();
     }
 
     @SuppressWarnings("java:S4792" /* False positive */)
@@ -46,13 +45,13 @@ public class PmdAnalyser {
         // different format that is consistent across all analysers.
         Logger.getLogger("net.sourceforge.pmd").setLevel(Level.OFF);
 
-        final Path configPath = Configs.resolve("PMD", config.getConfigPath(), config.getProject(), config.getLog());
+        final Path configPath = Configs.resolve("PMD", config.configPath(), config.project(), config.log());
 
         final List<RuleSet> ruleSets = loadRuleSets(configPath);
         if (log.isDebugEnabled()) {
             log.debug("Active rules: " + getRules(ruleSets).collect(joining(", ", "", ".")));
         }
-        final Path targetPath = Paths.get(config.getTargetPath());
+        final Path targetPath = Paths.get(config.targetPath());
         final PMDConfiguration configuration = createPmdConfiguration(targetPath);
         final List<DataSource> files = getFiles();
         if (log.isDebugEnabled()) {
@@ -61,11 +60,11 @@ public class PmdAnalyser {
         }
         final Report report = PMD.processFiles(configuration, ruleSets, files, List.of());
         final List<RuleViolation> violations = report.getViolations();
-        return new PmdAnalysis(config.getProject(), violations.stream().map(PmdIssue::new).collect(toList()));
+        return new PmdAnalysis(config.project(), violations.stream().map(PmdIssue::new).collect(toList()));
     }
 
     private List<DataSource> getFiles() {
-        final Build build = config.getProject().getBuild();
+        final Build build = config.project().getBuild();
         final Path sources = Paths.get(build.getSourceDirectory());
         final Path testSources = Paths.get(build.getTestSourceDirectory());
         return Stream.of(sources, testSources)

@@ -1,6 +1,5 @@
 package ch.acanda.maven.coan;
 
-import lombok.Data;
 import lombok.Getter;
 import org.apache.maven.plugin.logging.Log;
 
@@ -102,12 +101,7 @@ public class RecordingLog implements Log {
         logEntries.add(new LogEntry(level, content, error));
     }
 
-    @Data
-    public static class LogEntry {
-        private final String level;
-        private final String content;
-        private final Throwable error;
-
+    public record LogEntry(String level, String content, Throwable error) {
         @Override
         public String toString() {
             final StringBuilder builder = new StringBuilder();
