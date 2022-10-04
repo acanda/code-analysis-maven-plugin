@@ -5,17 +5,17 @@ import java.util.Locale;
 
 public interface Issue {
 
-    Path getFile();
+    Path file();
 
-    int getLine();
+    int line();
 
-    int getColumn();
+    int column();
 
-    String getName();
+    String name();
 
-    String getDescription();
+    String description();
 
-    Severity getSeverity();
+    Severity severity();
 
     enum Severity {
         HIGHEST, HIGH, MEDIUM, LOW, LOWEST, IGNORE;

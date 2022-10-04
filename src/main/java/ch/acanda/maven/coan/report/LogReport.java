@@ -24,33 +24,33 @@ public class LogReport {
      *     For multi-module projects this should be the baseDir of the root project.
      */
     public static void report(final Analysis analysis, final Path baseDir, final Log log) {
-        final String artifactId = analysis.getProject().getArtifactId();
+        final String artifactId = analysis.project().getArtifactId();
         if (analysis.foundIssues()) {
             final var summary = "%s found %s in %s:";
-            log.warn(format(ENGLISH, summary, analysis.getToolName(), numberOfIssues(analysis), artifactId));
-            analysis.getIssues().stream()
-                .collect(Collectors.groupingBy(Issue::getFile))
+            log.warn(format(ENGLISH, summary, analysis.toolName(), numberOfIssues(analysis), artifactId));
+            analysis.issues().stream()
+                .collect(Collectors.groupingBy(Issue::file))
                 .forEach((file, fileIssues) -> {
                     log.warn(baseDir.relativize(file).toString());
                     fileIssues.stream()
-                        .sorted(comparing(Issue::getName).thenComparing(Issue::getLine))
+                        .sorted(comparing(Issue::name).thenComparing(Issue::line))
                         .map(LogReport::formatIssue)
                         .forEach(log::warn);
                 });
         } else {
-            log.info(analysis.getToolName() + " did not find any issues in " + artifactId + ".");
+            log.info(analysis.toolName() + " did not find any issues in " + artifactId + ".");
         }
     }
 
     private static String formatIssue(final Issue issue) {
         final var issueTemplate = " [%s] %s (%s:%d)";
-        final Path fileName = issue.getFile().getFileName();
-        final int line = issue.getLine();
-        final String name = issue.getName();
+        final Path fileName = issue.file().getFileName();
+        final int line = issue.line();
+        final String name = issue.name();
         // Ensure that the description ends in a period and does not contain
         // parentheses. We need the period because IntelliJ only creates links
         // if it finds the pattern ". (fileName:line)" in the console.
-        final String description = ensurePeriod(issue.getDescription())
+        final String description = ensurePeriod(issue.description())
             .replaceAll("\\s*\\(", ", ")
             .replaceAll("\\)", "");
         return format(ENGLISH, issueTemplate, name, description, fileName, line);

@@ -6,19 +6,19 @@ import java.util.List;
 
 public interface Analysis {
 
-    String getToolName();
+    String toolName();
 
     default boolean foundIssues() {
-        return !getIssues().isEmpty();
+        return !issues().isEmpty();
     }
 
     @SuppressWarnings("java:S1452")
-    List<? extends Issue> getIssues();
+    List<? extends Issue> issues();
 
     default int getNumberOfIssues() {
-        return getIssues().size();
+        return issues().size();
     }
 
-    MavenProject getProject();
+    MavenProject project();
 
 }

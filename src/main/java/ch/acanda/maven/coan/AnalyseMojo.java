@@ -61,7 +61,7 @@ public class AnalyseMojo extends AbstractCoanMojo {
     private static String numberOfToolIssues(final Analysis analysis) {
         final int count = analysis.getNumberOfIssues();
         final String noun = count == 1 ? "issue" : "issues";
-        return count + " " + analysis.getToolName() + " " + noun;
+        return count + " " + analysis.toolName() + " " + noun;
     }
 
 }
