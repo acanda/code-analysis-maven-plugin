@@ -10,6 +10,7 @@ import com.soebes.itf.jupiter.maven.MavenProjectResult;
 import org.assertj.core.api.Condition;
 
 import java.io.File;
+import java.nio.file.Files;
 
 import static com.soebes.itf.extension.assertj.MavenExecutionResultAssert.assertThat;
 
@@ -78,7 +79,7 @@ public class AggregateMojoIT {
     }
 
     private static Condition<MavenProjectResult> aTargetDirectory() {
-        return new Condition<>(p -> new File(p.getTargetProjectDirectory(), "target").exists(), "a target");
+        return new Condition<>(p -> Files.exists(p.getTargetProjectDirectory().resolve("target")), "a target");
     }
 
     private static String getPathForJavaSource(final String module, final String filename) {
