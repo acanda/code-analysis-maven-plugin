@@ -1,7 +1,7 @@
 package ch.acanda.maven.coan.checkstyle;
 
-import ch.acanda.maven.coan.Analysis;
 import ch.acanda.maven.coan.Configs;
+import ch.acanda.maven.coan.Inspection;
 import com.puppycrawl.tools.checkstyle.Checker;
 import com.puppycrawl.tools.checkstyle.ConfigurationLoader;
 import com.puppycrawl.tools.checkstyle.ModuleFactory;
@@ -28,17 +28,17 @@ import java.util.stream.Stream;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 
-public class CheckstyleAnalyser {
+public class CheckstyleInspector {
 
     private final CheckstyleConfig config;
     private final Log log;
 
-    public CheckstyleAnalyser(final CheckstyleConfig config) {
+    public CheckstyleInspector(final CheckstyleConfig config) {
         this.config = config;
         log = config.log();
     }
 
-    public Analysis analyse() throws MojoFailureException {
+    public Inspection inspect() throws MojoFailureException {
         try {
             final Path configPath = Configs.resolve("Checkstyle", config.configPath(), config.project(), config.log());
 
@@ -63,7 +63,7 @@ public class CheckstyleAnalyser {
             }
             rootModule.process(files);
 
-            return new CheckstyleAnalysis(config.project(), issueCollector.getIssues());
+            return new CheckstyleInspection(config.project(), issueCollector.getIssues());
 
         } catch (final CheckstyleException e) {
             throw new MojoFailureException("Failed to run Checkstyle.", e);
@@ -76,7 +76,7 @@ public class CheckstyleAnalyser {
         final Path testSources = Paths.get(build.getTestSourceDirectory());
         return Stream.of(sources, testSources)
             .filter(Files::exists)
-            .flatMap(CheckstyleAnalyser::getFiles)
+            .flatMap(CheckstyleInspector::getFiles)
             .filter(Files::isRegularFile)
             .filter(path -> path.getFileName().toString().endsWith(".java"))
             .map(Path::toFile)

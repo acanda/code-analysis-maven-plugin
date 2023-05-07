@@ -1,6 +1,6 @@
 package ch.acanda.maven.coan.report;
 
-import ch.acanda.maven.coan.Analysis;
+import ch.acanda.maven.coan.Inspection;
 import ch.acanda.maven.coan.Issue;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
@@ -30,9 +30,9 @@ public class GitHubReport {
 
     private final MavenProject project;
     private final Path baseDir;
-    private final List<Analysis> analyses;
+    private final List<Inspection> analyses;
 
-    public GitHubReport(final MavenProject project, final Path baseDir, final Analysis... analyses) {
+    public GitHubReport(final MavenProject project, final Path baseDir, final Inspection... analyses) {
         this.project = project;
         this.baseDir = baseDir;
         this.analyses = Arrays.asList(analyses);
@@ -78,12 +78,12 @@ public class GitHubReport {
     }
 
     private void writeSummary(final PrintWriter markdown) {
-        final boolean foundIssues = analyses.stream().anyMatch(Analysis::foundIssues);
+        final boolean foundIssues = analyses.stream().anyMatch(Inspection::foundIssues);
         if (foundIssues) {
             markdown.println("## Summary");
             markdown.println();
             analyses.stream()
-                .collect(groupingBy(Analysis::toolName, summarizingLong(Analysis::getNumberOfIssues)))
+                .collect(groupingBy(Inspection::toolName, summarizingLong(Inspection::getNumberOfIssues)))
                 .entrySet()
                 .stream()
                 .map(entry -> escapeHtml4(entry.getKey()) + " found " + numberOfIssues(entry.getValue()) + ".")
@@ -101,9 +101,9 @@ public class GitHubReport {
     }
 
     private void writeAnalyses(final PrintWriter markdown) {
-        final Map<MavenProject, List<Analysis>> analysesByProject = analyses.stream()
-            .filter(Analysis::foundIssues)
-            .collect(groupingBy(Analysis::project));
+        final Map<MavenProject, List<Inspection>> analysesByProject = analyses.stream()
+            .filter(Inspection::foundIssues)
+            .collect(groupingBy(Inspection::project));
         final boolean includeProjectName = analysesByProject.size() > 1;
         analysesByProject
             .entrySet()
@@ -112,7 +112,7 @@ public class GitHubReport {
             .forEachOrdered(entry -> writeAnalyses(entry.getKey(), entry.getValue(), includeProjectName, markdown));
     }
 
-    private void writeAnalyses(final MavenProject project, final List<Analysis> analyses,
+    private void writeAnalyses(final MavenProject project, final List<Inspection> analyses,
         final boolean includeProjectName, final PrintWriter markdown) {
         if (includeProjectName) {
             markdown.print("## ");
@@ -122,12 +122,12 @@ public class GitHubReport {
         analyses.forEach(analysis -> writeAnalysis(analysis, includeProjectName, markdown));
     }
 
-    private void writeAnalysis(final Analysis analysis, final boolean isLevel3, final PrintWriter markdown) {
+    private void writeAnalysis(final Inspection inspection, final boolean isLevel3, final PrintWriter markdown) {
         markdown.print(isLevel3 ? "### " : "## ");
-        markdown.print(escapeHtml4(analysis.toolName()));
+        markdown.print(escapeHtml4(inspection.toolName()));
         markdown.println(" Report");
         markdown.println();
-        analysis.issues()
+        inspection.issues()
             .stream()
             .collect(groupingBy(Issue::file, TreeMap::new, toList()))
             .forEach((file, issues) -> writeIssues(file, issues, markdown));

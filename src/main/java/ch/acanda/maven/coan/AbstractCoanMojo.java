@@ -80,7 +80,7 @@ abstract class AbstractCoanMojo extends AbstractMojo {
         return new CheckstyleConfig(project, getLog(), getCheckstyleConfigPath(), getTargetPath());
     }
 
-    protected void createReports(final Analysis... analyses) throws MojoFailureException {
+    protected void createReports(final Inspection... analyses) throws MojoFailureException {
         final Path baseDir = getProject().getBasedir().toPath();
         final Path targetDir = Paths.get(getTargetPath());
         final String gitHubStepSummary = getGithubStepSummary();

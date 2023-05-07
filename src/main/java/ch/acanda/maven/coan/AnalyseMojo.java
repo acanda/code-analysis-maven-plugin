@@ -1,7 +1,7 @@
 package ch.acanda.maven.coan;
 
-import ch.acanda.maven.coan.checkstyle.CheckstyleAnalyser;
-import ch.acanda.maven.coan.pmd.PmdAnalyser;
+import ch.acanda.maven.coan.checkstyle.CheckstyleInspector;
+import ch.acanda.maven.coan.pmd.PmdInspector;
 import ch.acanda.maven.coan.report.LogReport;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -24,20 +24,20 @@ public class AnalyseMojo extends AbstractCoanMojo {
         final ExecutorService executorService = Executors.newFixedThreadPool(2);
         try {
             final MavenProject project = getProject();
-            final PmdAnalyser pmdAnalyser = new PmdAnalyser(assemblePmdConfig(project));
-            final CheckstyleAnalyser checkstyleAnalyser = new CheckstyleAnalyser(assembleCheckstyleConfig(project));
+            final PmdInspector pmdInspector = new PmdInspector(assemblePmdConfig(project));
+            final CheckstyleInspector checkstyleInspector = new CheckstyleInspector(assembleCheckstyleConfig(project));
 
-            final Future<Analysis> pmdFuture = executorService.submit(pmdAnalyser::analyse);
-            final Future<Analysis> checkstyleFuture = executorService.submit(checkstyleAnalyser::analyse);
+            final Future<Inspection> pmdFuture = executorService.submit(pmdInspector::inspect);
+            final Future<Inspection> checkstyleFuture = executorService.submit(checkstyleInspector::inspect);
 
-            final Analysis pmdAnalysis = pmdFuture.get();
-            final Analysis checkstyleAnalysis = checkstyleFuture.get();
+            final Inspection pmdInspection = pmdFuture.get();
+            final Inspection checkstyleInspection = checkstyleFuture.get();
             executorService.shutdown();
 
-            LogReport.report(pmdAnalysis, project.getBasedir().toPath(), getLog());
-            LogReport.report(checkstyleAnalysis, project.getBasedir().toPath(), getLog());
-            createReports(pmdAnalysis, checkstyleAnalysis);
-            failOnIssues(pmdAnalysis, checkstyleAnalysis);
+            LogReport.report(pmdInspection, project.getBasedir().toPath(), getLog());
+            LogReport.report(checkstyleInspection, project.getBasedir().toPath(), getLog());
+            createReports(pmdInspection, checkstyleInspection);
+            failOnIssues(pmdInspection, checkstyleInspection);
 
         } catch (final ExecutionException e) {
             throw new MojoFailureException(e.getMessage(), e);
@@ -47,21 +47,21 @@ public class AnalyseMojo extends AbstractCoanMojo {
         }
     }
 
-    private void failOnIssues(final Analysis pmdAnalysis, final Analysis checkstyleAnalysis)
+    private void failOnIssues(final Inspection pmdInspection, final Inspection checkstyleInspection)
         throws MojoFailureException {
-        if (isFailOnIssues() && (pmdAnalysis.foundIssues() || checkstyleAnalysis.foundIssues())) {
-            final String numberOfToolIssues = Stream.of(pmdAnalysis, checkstyleAnalysis)
-                .filter(Analysis::foundIssues)
+        if (isFailOnIssues() && (pmdInspection.foundIssues() || checkstyleInspection.foundIssues())) {
+            final String numberOfToolIssues = Stream.of(pmdInspection, checkstyleInspection)
+                .filter(Inspection::foundIssues)
                 .map(AnalyseMojo::numberOfToolIssues)
                 .collect(joining(" and "));
             throw new MojoFailureException("Code analysis found " + numberOfToolIssues + ".");
         }
     }
 
-    private static String numberOfToolIssues(final Analysis analysis) {
-        final int count = analysis.getNumberOfIssues();
+    private static String numberOfToolIssues(final Inspection inspection) {
+        final int count = inspection.getNumberOfIssues();
         final String noun = count == 1 ? "issue" : "issues";
-        return count + " " + analysis.toolName() + " " + noun;
+        return count + " " + inspection.toolName() + " " + noun;
     }
 
 }

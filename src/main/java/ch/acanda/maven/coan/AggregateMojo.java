@@ -1,7 +1,7 @@
 package ch.acanda.maven.coan;
 
-import ch.acanda.maven.coan.checkstyle.CheckstyleAnalyser;
-import ch.acanda.maven.coan.pmd.PmdAnalyser;
+import ch.acanda.maven.coan.checkstyle.CheckstyleInspector;
+import ch.acanda.maven.coan.pmd.PmdInspector;
 import ch.acanda.maven.coan.report.LogReport;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -33,23 +33,23 @@ public class AggregateMojo extends AbstractCoanMojo {
 
         logReactorProjects();
 
-        final List<Callable<Analysis>> analysers = reactorProjects.stream()
-            .flatMap(reactorProject -> Stream.<Callable<Analysis>>of(
-                () -> new PmdAnalyser(assemblePmdConfig(reactorProject)).analyse(),
-                () -> new CheckstyleAnalyser(assembleCheckstyleConfig(reactorProject)).analyse()
+        final List<Callable<Inspection>> analysers = reactorProjects.stream()
+            .flatMap(reactorProject -> Stream.<Callable<Inspection>>of(
+                () -> new PmdInspector(assemblePmdConfig(reactorProject)).inspect(),
+                () -> new CheckstyleInspector(assembleCheckstyleConfig(reactorProject)).inspect()
             ))
             .collect(toList());
 
         try {
             final ExecutorService executorService = Executors.newFixedThreadPool(analysers.size());
-            final List<Future<Analysis>> runningAnalyses = executorService.invokeAll(analysers, 1, TimeUnit.HOURS);
-            final List<Analysis> analyses = runningAnalyses.stream()
+            final List<Future<Inspection>> runningAnalyses = executorService.invokeAll(analysers, 1, TimeUnit.HOURS);
+            final List<Inspection> analyses = runningAnalyses.stream()
                 .map(AggregateMojo::waitUntilFinished)
                 .collect(toList());
             executorService.shutdown();
 
             analyses.forEach(analysis -> LogReport.report(analysis, getProject().getBasedir().toPath(), getLog()));
-            createReports(analyses.toArray(Analysis[]::new));
+            createReports(analyses.toArray(Inspection[]::new));
             failOnIssues(analyses);
 
         } catch (final RejectedExecutionException e) {
@@ -64,10 +64,10 @@ public class AggregateMojo extends AbstractCoanMojo {
 
     }
 
-    private void failOnIssues(final List<Analysis> analyses) throws MojoFailureException {
-        final boolean foundIssues = analyses.stream().anyMatch(Analysis::foundIssues);
+    private void failOnIssues(final List<Inspection> analyses) throws MojoFailureException {
+        final boolean foundIssues = analyses.stream().anyMatch(Inspection::foundIssues);
         if (isFailOnIssues() && foundIssues) {
-            final long sum = analyses.stream().mapToInt(Analysis::getNumberOfIssues).sum();
+            final long sum = analyses.stream().mapToInt(Inspection::getNumberOfIssues).sum();
             final String issues = sum == 1 ? " issue" : " issues";
             throw new MojoFailureException("Code analysis found " + sum + issues + ".");
         }
@@ -82,7 +82,7 @@ public class AggregateMojo extends AbstractCoanMojo {
         }
     }
 
-    private static Analysis waitUntilFinished(final Future<Analysis> runningAnalysis) {
+    private static Inspection waitUntilFinished(final Future<Inspection> runningAnalysis) {
         try {
             return runningAnalysis.get(1, TimeUnit.HOURS);
         } catch (final InterruptedException e) {

@@ -1,6 +1,6 @@
 package ch.acanda.maven.coan.report;
 
-import ch.acanda.maven.coan.Analysis;
+import ch.acanda.maven.coan.Inspection;
 import ch.acanda.maven.coan.Issue;
 import lombok.experimental.UtilityClass;
 import org.apache.maven.plugin.logging.Log;
@@ -23,12 +23,12 @@ public class LogReport {
      *     For projects without modules this should be the baseDir of the project.
      *     For multi-module projects this should be the baseDir of the root project.
      */
-    public static void report(final Analysis analysis, final Path baseDir, final Log log) {
-        final String artifactId = analysis.project().getArtifactId();
-        if (analysis.foundIssues()) {
+    public static void report(final Inspection inspection, final Path baseDir, final Log log) {
+        final String artifactId = inspection.project().getArtifactId();
+        if (inspection.foundIssues()) {
             final var summary = "%s found %s in %s:";
-            log.warn(format(ENGLISH, summary, analysis.toolName(), numberOfIssues(analysis), artifactId));
-            analysis.issues().stream()
+            log.warn(format(ENGLISH, summary, inspection.toolName(), numberOfIssues(inspection), artifactId));
+            inspection.issues().stream()
                 .collect(Collectors.groupingBy(Issue::file))
                 .forEach((file, fileIssues) -> {
                     log.warn(baseDir.relativize(file).toString());
@@ -38,7 +38,7 @@ public class LogReport {
                         .forEach(log::warn);
                 });
         } else {
-            log.info(analysis.toolName() + " did not find any issues in " + artifactId + ".");
+            log.info(inspection.toolName() + " did not find any issues in " + artifactId + ".");
         }
     }
 
@@ -60,8 +60,8 @@ public class LogReport {
         return s.endsWith(".") ? s : s + ".";
     }
 
-    private static String numberOfIssues(final Analysis analysis) {
-        final int count = analysis.getNumberOfIssues();
+    private static String numberOfIssues(final Inspection inspection) {
+        final int count = inspection.getNumberOfIssues();
         final String noun = count == 1 ? " issue" : " issues";
         return count + noun;
     }

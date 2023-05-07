@@ -1,6 +1,6 @@
 package ch.acanda.maven.coan.report;
 
-import ch.acanda.maven.coan.Analysis;
+import ch.acanda.maven.coan.Inspection;
 import ch.acanda.maven.coan.Issue;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
@@ -114,8 +114,8 @@ class GitLabReportTest {
                 ]""");
     }
 
-    private static Analysis analysis(final String tool, final List<? extends Issue> issues) {
-        return new StubAnalysis(tool, issues, new MavenProject());
+    private static Inspection analysis(final String tool, final List<? extends Issue> issues) {
+        return new StubInspection(tool, issues, new MavenProject());
     }
 
     private static Issue issue(final Path file, final int line, final String name, final String description,

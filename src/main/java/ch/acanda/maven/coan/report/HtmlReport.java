@@ -1,6 +1,6 @@
 package ch.acanda.maven.coan.report;
 
-import ch.acanda.maven.coan.Analysis;
+import ch.acanda.maven.coan.Inspection;
 import ch.acanda.maven.coan.Issue;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
@@ -25,9 +25,9 @@ public class HtmlReport {
 
     private final MavenProject project;
     private final Path baseDir;
-    private final List<Analysis> analyses;
+    private final List<Inspection> analyses;
 
-    public HtmlReport(final MavenProject project, final Path baseDir, final Analysis... analyses) {
+    public HtmlReport(final MavenProject project, final Path baseDir, final Inspection... analyses) {
         this.project = project;
         this.baseDir = baseDir;
         this.analyses = Arrays.asList(analyses);
@@ -70,12 +70,12 @@ public class HtmlReport {
     }
 
     private void writeSummary(final PrintWriter html) {
-        final boolean foundIssues = analyses.stream().anyMatch(Analysis::foundIssues);
+        final boolean foundIssues = analyses.stream().anyMatch(Inspection::foundIssues);
         html.println("<section>");
         if (foundIssues) {
             html.println("<h2>Summary</h2>");
             analyses.stream()
-                .collect(groupingBy(Analysis::toolName, summarizingLong(Analysis::getNumberOfIssues)))
+                .collect(groupingBy(Inspection::toolName, summarizingLong(Inspection::getNumberOfIssues)))
                 .entrySet()
                 .stream()
                 .map(entry -> escapeHtml4(entry.getKey()) + " found " + numberOfIssues(entry.getValue()) + ".")
@@ -93,9 +93,9 @@ public class HtmlReport {
     }
 
     private void writeAnalyses(final PrintWriter html) {
-        final Map<MavenProject, List<Analysis>> analysesByProject = analyses.stream()
-            .filter(Analysis::foundIssues)
-            .collect(groupingBy(Analysis::project));
+        final Map<MavenProject, List<Inspection>> analysesByProject = analyses.stream()
+            .filter(Inspection::foundIssues)
+            .collect(groupingBy(Inspection::project));
         final boolean includeProjectName = analysesByProject.size() > 1;
         analysesByProject
             .entrySet()
@@ -104,7 +104,7 @@ public class HtmlReport {
             .forEachOrdered(entry -> writeAnalyses(entry.getKey(), entry.getValue(), includeProjectName, html));
     }
 
-    private void writeAnalyses(final MavenProject project, final List<Analysis> analyses,
+    private void writeAnalyses(final MavenProject project, final List<Inspection> analyses,
         final boolean includeProjectName, final PrintWriter html) {
         if (includeProjectName) {
             html.println("<section>");
@@ -113,19 +113,19 @@ public class HtmlReport {
             html.print(escapeHtml4(getProjectName(project)));
             html.println("</summary>");
         }
-        analyses.forEach(analysis -> writeAnalysis(analysis, html));
+        analyses.forEach(inspection -> writeAnalysis(inspection, html));
         if (includeProjectName) {
             html.println("</details>");
             html.println("</section>");
         }
     }
 
-    private void writeAnalysis(final Analysis analysis, final PrintWriter html) {
+    private void writeAnalysis(final Inspection inspection, final PrintWriter html) {
         html.println("<section>");
         html.print("<h2>");
-        html.print(escapeHtml4(analysis.toolName()));
+        html.print(escapeHtml4(inspection.toolName()));
         html.println(" Report</h2>");
-        analysis.issues()
+        inspection.issues()
             .stream()
             .collect(groupingBy(Issue::file))
             .forEach((file, issues) -> writeIssues(file, issues, html));

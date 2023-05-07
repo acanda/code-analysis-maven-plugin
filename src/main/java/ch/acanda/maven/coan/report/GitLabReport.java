@@ -1,6 +1,6 @@
 package ch.acanda.maven.coan.report;
 
-import ch.acanda.maven.coan.Analysis;
+import ch.acanda.maven.coan.Inspection;
 import ch.acanda.maven.coan.Issue;
 import ch.acanda.maven.coan.Issue.Severity;
 import com.fasterxml.jackson.jr.ob.JSON;
@@ -42,9 +42,9 @@ public class GitLabReport {
     );
 
     private final Path baseDir;
-    private final List<Analysis> analyses;
+    private final List<Inspection> analyses;
 
-    public GitLabReport(final Path baseDir, final Analysis... analyses) {
+    public GitLabReport(final Path baseDir, final Inspection... analyses) {
         this.baseDir = baseDir;
         this.analyses = Arrays.asList(analyses);
     }
@@ -58,9 +58,9 @@ public class GitLabReport {
                     .composeTo(file.toFile())
                     .startArray();
 
-            for (final Analysis analysis : analyses) {
-                for (final Issue issue : analysis.issues()) {
-                    composeIssue(json, analysis, issue);
+            for (final Inspection inspection : analyses) {
+                for (final Issue issue : inspection.issues()) {
+                    composeIssue(json, inspection, issue);
                 }
             }
 
@@ -71,10 +71,10 @@ public class GitLabReport {
 
     }
 
-    private void composeIssue(final ArrayComposer<JSONComposer<OutputStream>> json, final Analysis analysis,
+    private void composeIssue(final ArrayComposer<JSONComposer<OutputStream>> json, final Inspection inspection,
         final Issue issue) throws IOException {
         final String description =
-            format(Locale.ENGLISH, "%s [%s]: %s", analysis.toolName(), issue.name(), issue.description());
+            format(Locale.ENGLISH, "%s [%s]: %s", inspection.toolName(), issue.name(), issue.description());
         final String path = baseDir.relativize(issue.file()).toString().replace('\\', '/');
         final String fingerprint = createFingerprint(issue.name(), path, issue.line(), issue.column());
         json.startObject()

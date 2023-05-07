@@ -1,7 +1,7 @@
 package ch.acanda.maven.coan.pmd;
 
-import ch.acanda.maven.coan.Analysis;
 import ch.acanda.maven.coan.Configs;
+import ch.acanda.maven.coan.Inspection;
 import net.sourceforge.pmd.PMD;
 import net.sourceforge.pmd.PMDConfiguration;
 import net.sourceforge.pmd.Report;
@@ -28,21 +28,21 @@ import java.util.stream.Stream;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 
-public class PmdAnalyser {
+public class PmdInspector {
 
     private final PmdConfig config;
     private final Log log;
 
-    public PmdAnalyser(final PmdConfig config) {
+    public PmdInspector(final PmdConfig config) {
         this.config = config;
         log = config.log();
     }
 
     @SuppressWarnings("java:S4792" /* False positive */)
-    public Analysis analyse() throws MojoFailureException {
+    public Inspection inspect() throws MojoFailureException {
         // This triggers a false positive in Sonar (java:S4792).
         // We disable the logger for PMD because we log the PMD issues in a
-        // different format that is consistent across all analysers.
+        // different format that is consistent across all inspectors.
         Logger.getLogger("net.sourceforge.pmd").setLevel(Level.OFF);
 
         final Path configPath = Configs.resolve("PMD", config.configPath(), config.project(), config.log());
@@ -60,7 +60,7 @@ public class PmdAnalyser {
         }
         final Report report = PMD.processFiles(configuration, ruleSets, files, List.of());
         final List<RuleViolation> violations = report.getViolations();
-        return new PmdAnalysis(config.project(), violations.stream().map(PmdIssue::new).collect(toList()));
+        return new PmdInspection(config.project(), violations.stream().map(PmdIssue::new).collect(toList()));
     }
 
     private List<DataSource> getFiles() {
@@ -69,7 +69,7 @@ public class PmdAnalyser {
         final Path testSources = Paths.get(build.getTestSourceDirectory());
         return Stream.of(sources, testSources)
             .filter(Files::exists)
-            .flatMap(PmdAnalyser::getFiles)
+            .flatMap(PmdInspector::getFiles)
             .filter(Files::isRegularFile)
             .map(path -> new FileDataSource(path.toFile()))
             .collect(toList());

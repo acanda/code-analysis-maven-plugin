@@ -1,6 +1,6 @@
 package ch.acanda.maven.coan.report;
 
-import ch.acanda.maven.coan.Analysis;
+import ch.acanda.maven.coan.Inspection;
 import ch.acanda.maven.coan.Issue;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
@@ -24,10 +24,10 @@ class GitHubReportTest {
         Files.createDirectories(targetDir);
         final Path reportFile = targetDir.resolve("report.md");
         final MavenProject project = new MavenProject();
-        project.setName("code-analysis-maven-plugin");
+        project.setName("code-inspection-maven-plugin");
         project.setVersion("1.0.0");
         final GitHubReport report = new GitHubReport(project, baseDir,
-            analysis("ABC", List.of(
+            inspection("ABC", List.of(
                 issue(baseDir.resolve("src").resolve("main").resolve("java").resolve("Hello.java"),
                     12, "IssueA", "Issue A description", Issue.Severity.HIGHEST),
                 issue(baseDir.resolve("src").resolve("main").resolve("java").resolve("World.java"),
@@ -47,7 +47,7 @@ class GitHubReportTest {
 
         assertThat(Files.readString(reportFile, UTF_8).replaceAll("\\r?\\n", "\n")).isEqualTo(
             """
-                # Code Analysis for code-analysis-maven-plugin 1.0.0
+                # Code Analysis for code-inspection-maven-plugin 1.0.0
 
                 ## Summary
 
@@ -68,8 +68,8 @@ class GitHubReportTest {
                 """);
     }
 
-    private static Analysis analysis(final String tool, final List<? extends Issue> issues) {
-        return new StubAnalysis(tool, issues, new MavenProject());
+    private static Inspection inspection(final String tool, final List<? extends Issue> issues) {
+        return new StubInspection(tool, issues, new MavenProject());
     }
 
     private static Issue issue(final Path file, final int line, final String name, final String description,
