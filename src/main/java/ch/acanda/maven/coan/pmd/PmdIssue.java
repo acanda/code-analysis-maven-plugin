@@ -1,7 +1,7 @@
 package ch.acanda.maven.coan.pmd;
 
 import ch.acanda.maven.coan.Issue;
-import net.sourceforge.pmd.RuleViolation;
+import net.sourceforge.pmd.reporting.RuleViolation;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -10,7 +10,7 @@ public record PmdIssue(RuleViolation violation) implements Issue {
 
     @Override
     public Path file() {
-        return Paths.get(violation.getFilename());
+        return Paths.get(violation.getFileId().getAbsolutePath());
     }
 
     @Override

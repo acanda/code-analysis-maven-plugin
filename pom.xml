@@ -21,7 +21,7 @@
     <junit.version>5.10.2</junit.version>
     <itf.version>0.13.1</itf.version>
     <checkstyle.version>10.14.2</checkstyle.version>
-    <pmd.version>6.55.0</pmd.version>
+    <pmd.version>7.0.0</pmd.version>
     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     <sonar.organization>acanda</sonar.organization>
     <sonar.projectKey>acanda_code-analysis-maven-plugin</sonar.projectKey>
@@ -52,6 +52,16 @@
           <artifactId>jcommander</artifactId>
         </exclusion>
       </exclusions>
+    </dependency>
+    <dependency>
+      <!--
+        PMD and Checkstyle both use Saxon-HE, but different versions. PMD
+        requires this version and will not work with the newer one that
+        Checkstyle uses.
+      -->
+      <groupId>net.sf.saxon</groupId>
+      <artifactId>Saxon-HE</artifactId>
+      <version>10.7</version>
     </dependency>
     <dependency>
       <groupId>com.puppycrawl.tools</groupId>

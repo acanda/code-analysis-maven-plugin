@@ -4,7 +4,7 @@ import ch.acanda.maven.coan.VersionsMojo;
 import com.puppycrawl.tools.checkstyle.Main;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import net.sourceforge.pmd.PMD;
+import net.sourceforge.pmd.PmdAnalysis;
 import org.apache.maven.plugin.MojoFailureException;
 
 import java.io.IOException;
@@ -26,7 +26,7 @@ public final class Versions {
     }
 
     public static String getPmdVersion() throws MojoFailureException {
-        return getVersion(PMD.class, PMD_GROUP_ID, PMD_ARTIFACT_ID);
+        return getVersion(PmdAnalysis.class, PMD_GROUP_ID, PMD_ARTIFACT_ID);
     }
 
     public static String getCheckstyleVersion() throws MojoFailureException {

@@ -40,13 +40,12 @@ public class AggregateMojo extends AbstractCoanMojo {
             ))
             .collect(toList());
 
+        final ExecutorService executorService = Executors.newFixedThreadPool(analysers.size());
         try {
-            final ExecutorService executorService = Executors.newFixedThreadPool(analysers.size());
             final List<Future<Inspection>> runningAnalyses = executorService.invokeAll(analysers, 1, TimeUnit.HOURS);
             final List<Inspection> analyses = runningAnalyses.stream()
                 .map(AggregateMojo::waitUntilFinished)
                 .collect(toList());
-            executorService.shutdown();
 
             analyses.forEach(analysis -> LogReport.report(analysis, getProject().getBasedir().toPath(), getLog()));
             createReports(analyses.toArray(Inspection[]::new));
@@ -60,6 +59,8 @@ public class AggregateMojo extends AbstractCoanMojo {
         } catch (final AnalysisExecutionException e) {
             final Throwable cause = e.getCause();
             throw new MojoFailureException(cause.getMessage(), cause); //NOPMD
+        } finally {
+            executorService.shutdown();
         }
 
     }

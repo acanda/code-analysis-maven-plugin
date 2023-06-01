@@ -32,7 +32,6 @@ public class AnalyseMojo extends AbstractCoanMojo {
 
             final Inspection pmdInspection = pmdFuture.get();
             final Inspection checkstyleInspection = checkstyleFuture.get();
-            executorService.shutdown();
 
             LogReport.report(pmdInspection, project.getBasedir().toPath(), getLog());
             LogReport.report(checkstyleInspection, project.getBasedir().toPath(), getLog());
@@ -44,6 +43,8 @@ public class AnalyseMojo extends AbstractCoanMojo {
         } catch (final InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new MojoFailureException(e.getMessage(), e);
+        } finally {
+            executorService.shutdown();
         }
     }
 

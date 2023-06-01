@@ -12,6 +12,8 @@ import org.assertj.core.api.Condition;
 import java.io.File;
 import java.nio.file.Files;
 
+import static ch.acanda.maven.coan.VersionsMojoTest.CHECKSTYLE_VERSION_PATTERN;
+import static ch.acanda.maven.coan.VersionsMojoTest.PMD_VERSION_PATTERN;
 import static com.soebes.itf.extension.assertj.MavenExecutionResultAssert.assertThat;
 
 @MavenJupiterExtension
@@ -27,8 +29,12 @@ public class AggregateMojoIT {
         target.withFile("code-analysis/report.gitlab.json").exists();
         target.withFile("code-analysis/report.github.md").exists();
         target.withFile("summary.md").exists();
-        assertThat(project).out().info().anyMatch(line -> line.matches("PMD \\d+\\.\\d+\\.\\d+"));
-        assertThat(project).out().info().anyMatch(line -> line.matches("Checkstyle \\d+\\.\\d+(\\.\\d+)?"));
+        assertThat(project).out().info()
+            .describedAs("Contains PMD version matching pattern \"" + PMD_VERSION_PATTERN + "\"")
+            .anyMatch(line -> line.matches(PMD_VERSION_PATTERN));
+        assertThat(project).out().info()
+            .describedAs("Contains Checkstyle version matching pattern \"" + CHECKSTYLE_VERSION_PATTERN + "\"")
+            .anyMatch(line -> line.matches(CHECKSTYLE_VERSION_PATTERN));
         assertThat(project).out().info().contains("PMD did not find any issues in aggregate.");
         assertThat(project).out().info().contains("Checkstyle did not find any issues in aggregate.");
         assertThat(project).out().info().contains("PMD did not find any issues in aggregate-module-1.");
@@ -49,8 +55,12 @@ public class AggregateMojoIT {
         target.withFile("code-analysis/report.gitlab.json").exists();
         target.withFile("code-analysis/report.github.md").exists();
         target.withFile("summary.md").exists();
-        assertThat(project).out().info().anyMatch(line -> line.matches("PMD \\d+\\.\\d+\\.\\d+"));
-        assertThat(project).out().info().anyMatch(line -> line.matches("Checkstyle \\d+\\.\\d+(\\.\\d+)?"));
+        assertThat(project).out().info()
+            .describedAs("Contains PMD version matching pattern \"" + PMD_VERSION_PATTERN + "\"")
+            .anyMatch(line -> line.matches(PMD_VERSION_PATTERN));
+        assertThat(project).out().info()
+            .describedAs("Contains Checkstyle version matching pattern \"" + CHECKSTYLE_VERSION_PATTERN + "\"")
+            .anyMatch(line -> line.matches(CHECKSTYLE_VERSION_PATTERN));
         assertThat(project).out().info().contains("PMD did not find any issues in aggregate.");
         assertThat(project).out().info().contains("Checkstyle did not find any issues in aggregate.");
         assertThat(project).out().warn().containsSubsequence(
