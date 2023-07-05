@@ -138,7 +138,7 @@
     <dependency>
       <groupId>net.javacrumbs.json-unit</groupId>
       <artifactId>json-unit-assertj</artifactId>
-      <version>2.38.0</version>
+      <version>3.0.0</version>
       <scope>test</scope>
     </dependency>
     <!-- PMD uses an older version of gson that is incompatible with json unit. -->
