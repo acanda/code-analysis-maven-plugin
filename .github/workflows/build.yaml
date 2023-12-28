@@ -25,4 +25,4 @@ jobs:
       - name: Build with Maven
         env:
           NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
-        run: mvn -B verify --file pom.xml
+        run: ./mvnw -B verify --file pom.xml
