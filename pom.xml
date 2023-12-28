@@ -218,10 +218,10 @@
         <artifactId>maven-failsafe-plugin</artifactId>
         <version>3.2.3</version>
         <configuration>
-          <systemProperties>
+          <systemPropertyVariables>
             <maven.version>${maven.version}</maven.version>
             <maven.home>${maven.home}</maven.home>
-          </systemProperties>
+          </systemPropertyVariables>
         </configuration>
         <executions>
           <execution>
