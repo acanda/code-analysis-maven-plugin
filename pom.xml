@@ -19,7 +19,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.version>3.9.6</maven.version>
     <junit.version>5.10.1</junit.version>
-    <itf.version>0.13.0</itf.version>
+    <itf.version>0.13.1</itf.version>
     <checkstyle.version>10.12.6</checkstyle.version>
     <pmd.version>6.55.0</pmd.version>
     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
