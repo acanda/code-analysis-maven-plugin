@@ -61,7 +61,7 @@
       -->
       <groupId>net.sf.saxon</groupId>
       <artifactId>Saxon-HE</artifactId>
-      <version>10.7</version>
+      <version>12.4</version>
     </dependency>
     <dependency>
       <groupId>com.puppycrawl.tools</groupId>
