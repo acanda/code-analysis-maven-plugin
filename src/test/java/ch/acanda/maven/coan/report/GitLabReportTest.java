@@ -23,20 +23,17 @@ class GitLabReportTest {
         final Path targetDir = baseDir.resolve("target");
         Files.createDirectories(targetDir);
         final Path reportFile = targetDir.resolve("report.json");
+        final Path javaMain = baseDir.resolve("src").resolve("main").resolve("java");
+        final Path hello = javaMain.resolve("Hello.java");
+        final Path world = javaMain.resolve("World.java");
         final GitLabReport report = new GitLabReport(baseDir,
-            analysis("ABC", List.of(
-                issue(baseDir.resolve("src").resolve("main").resolve("java").resolve("Hello.java"),
-                    12, "IssueA", "Issue A description", Issue.Severity.HIGHEST),
-                issue(baseDir.resolve("src").resolve("main").resolve("java").resolve("World.java"),
-                    25, "IssueB", "Issue B description", Issue.Severity.HIGH),
-                issue(baseDir.resolve("src").resolve("main").resolve("java").resolve("Hello.java"),
-                    7, "IssueC", "Issue C description", Issue.Severity.MEDIUM),
-                issue(baseDir.resolve("src").resolve("main").resolve("java").resolve("World.java"),
-                    38, "IssueD", "Issue D description", Issue.Severity.LOW),
-                issue(baseDir.resolve("src").resolve("main").resolve("java").resolve("Hello.java"),
-                    24, "IssueE", "Issue E description", Issue.Severity.LOWEST),
-                issue(baseDir.resolve("src").resolve("main").resolve("java").resolve("World.java"),
-                    15, "IssueF", "Issue F description", Issue.Severity.IGNORE)
+            inspection("ABC", List.of(
+                issue(hello, 12, "IssueA", "Issue A description", Issue.Severity.HIGHEST),
+                issue(world, 25, "IssueB", "Issue B description", Issue.Severity.HIGH),
+                issue(hello, 7, "IssueC", "Issue C description", Issue.Severity.MEDIUM),
+                issue(world, 38, "IssueD", "Issue D description", Issue.Severity.LOW),
+                issue(hello, 24, "IssueE", "Issue E description", Issue.Severity.LOWEST),
+                issue(world, 15, "IssueF", "Issue F description", Issue.Severity.IGNORE)
             ))
         );
 
@@ -114,7 +111,7 @@ class GitLabReportTest {
                 ]""");
     }
 
-    private static Inspection analysis(final String tool, final List<? extends Issue> issues) {
+    private static Inspection inspection(final String tool, final List<? extends Issue> issues) {
         return new StubInspection(tool, issues, new MavenProject());
     }
 

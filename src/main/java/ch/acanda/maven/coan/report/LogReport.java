@@ -26,7 +26,7 @@ public class LogReport {
     public static void report(final Inspection inspection, final Path baseDir, final Log log) {
         final String artifactId = inspection.project().getArtifactId();
         if (inspection.foundIssues()) {
-            final var summary = "%s found %s in %s:";
+            final String summary = "%s found %s in %s:";
             log.warn(format(ENGLISH, summary, inspection.toolName(), numberOfIssues(inspection), artifactId));
             inspection.issues().stream()
                 .collect(Collectors.groupingBy(Issue::file))
@@ -43,7 +43,7 @@ public class LogReport {
     }
 
     private static String formatIssue(final Issue issue) {
-        final var issueTemplate = " [%s] %s (%s:%d)";
+        final String issueTemplate = " [%s] %s (%s:%d)";
         final Path fileName = issue.file().getFileName();
         final int line = issue.line();
         final String name = issue.name();

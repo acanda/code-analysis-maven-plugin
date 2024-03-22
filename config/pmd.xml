@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <ruleset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="code-analysis-maven-plugin PMD rules"
-         xsi:noNamespaceSchemaLocation="http://pmd.sourceforge.net/ruleset_2_0_0.xsd"
-         xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 http://pmd.sourceforge.net/ruleset_2_0_0.xsd"
+         xsi:noNamespaceSchemaLocation="https://pmd.sourceforge.net/ruleset_2_0_0.xsd"
+         xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.net/ruleset_2_0_0.xsd"
          xmlns="http://pmd.sourceforge.net/ruleset/2.0.0">
 
-  <!-- last updated for PMD 6.48.0 -->
+  <!-- last updated for PMD 7.0.0 -->
 
   <description>PMD rules for code-analysis-maven-plugin</description>
 
@@ -19,8 +19,8 @@
   <rule ref="category/java/codestyle.xml">
     <exclude name="AtLeastOneConstructor"/>
     <exclude name="CallSuperInConstructor"/>
+    <exclude name="ClassNamingConventions"/>
     <exclude name="CommentDefaultAccessModifier"/>
-    <exclude name="DefaultPackage"/>
     <exclude name="LongVariable"/>
     <exclude name="OnlyOneReturn"/>
     <exclude name="ShortMethodName"/>
@@ -41,18 +41,13 @@
   <rule ref="category/java/design.xml">
     <exclude name="CyclomaticComplexity"/>
     <exclude name="LawOfDemeter"/>
-    <exclude name="TooManyMethods"/>
     <exclude name="LoosePackageCoupling"/>
+    <exclude name="NPathComplexity"/>
+    <exclude name="TooManyMethods"/>
   </rule>
   <rule ref="category/java/design.xml/CyclomaticComplexity">
     <properties>
       <property name="violationSuppressRegex" value=".*'equals\(Object\)'.*"/>
-    </properties>
-  </rule>
-  <rule ref="category/java/design.xml/ImmutableField">
-    <properties>
-      <property name="ignoredAnnotations"
-                value="lombok.Setter|lombok.Getter|lombok.Builder|lombok.Data|lombok.RequiredArgsConstructor|lombok.AllArgsConstructor|lombok.Value|lombok.NoArgsConstructor|org.apache.maven.plugins.annotations.Parameter"/>
     </properties>
   </rule>
   <rule ref="category/java/design.xml/NPathComplexity">
@@ -71,7 +66,6 @@
     <exclude name="AvoidDuplicateLiterals"/>
     <exclude name="AvoidFieldNameMatchingMethodName"/>
     <exclude name="AvoidLiteralsInIfCondition"/>
-    <exclude name="BeanMembersShouldSerialize"/>
     <exclude name="EmptyCatchBlock"/>
     <exclude name="MissingSerialVersionUID"/>
     <exclude name="ProperLogger"/>

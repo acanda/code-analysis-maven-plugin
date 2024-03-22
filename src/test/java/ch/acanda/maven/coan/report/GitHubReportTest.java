@@ -26,20 +26,17 @@ class GitHubReportTest {
         final MavenProject project = new MavenProject();
         project.setName("code-inspection-maven-plugin");
         project.setVersion("1.0.0");
+        final Path javaMain = baseDir.resolve("src").resolve("main").resolve("java");
+        final Path hello = javaMain.resolve("Hello.java");
+        final Path world = javaMain.resolve("World.java");
         final GitHubReport report = new GitHubReport(project, baseDir,
             inspection("ABC", List.of(
-                issue(baseDir.resolve("src").resolve("main").resolve("java").resolve("Hello.java"),
-                    12, "IssueA", "Issue A description", Issue.Severity.HIGHEST),
-                issue(baseDir.resolve("src").resolve("main").resolve("java").resolve("World.java"),
-                    25, "IssueB", "Issue B description", Issue.Severity.HIGH),
-                issue(baseDir.resolve("src").resolve("main").resolve("java").resolve("Hello.java"),
-                    7, "IssueC", "Issue C description", Issue.Severity.MEDIUM),
-                issue(baseDir.resolve("src").resolve("main").resolve("java").resolve("World.java"),
-                    38, "IssueD", "Issue D description", Issue.Severity.LOW),
-                issue(baseDir.resolve("src").resolve("main").resolve("java").resolve("Hello.java"),
-                    24, "IssueE", "Issue E description", Issue.Severity.LOWEST),
-                issue(baseDir.resolve("src").resolve("main").resolve("java").resolve("World.java"),
-                    15, "IssueF", "Issue F description", Issue.Severity.IGNORE)
+                issue(hello, 12, "IssueA", "Issue A description", Issue.Severity.HIGHEST),
+                issue(world, 25, "IssueB", "Issue B description", Issue.Severity.HIGH),
+                issue(hello, 7, "IssueC", "Issue C description", Issue.Severity.MEDIUM),
+                issue(world, 38, "IssueD", "Issue D description", Issue.Severity.LOW),
+                issue(hello, 24, "IssueE", "Issue E description", Issue.Severity.LOWEST),
+                issue(world, 15, "IssueF", "Issue F description", Issue.Severity.IGNORE)
             ))
         );
 
