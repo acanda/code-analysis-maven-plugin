@@ -10,10 +10,12 @@ import net.sourceforge.pmd.lang.rule.RuleSet;
 import net.sourceforge.pmd.lang.rule.RuleSetLoader;
 import net.sourceforge.pmd.reporting.Report;
 import net.sourceforge.pmd.reporting.RuleViolation;
+import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.model.Build;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
@@ -97,13 +99,18 @@ public class PmdInspector {
         return ruleSets.stream().flatMap(rs -> rs.getRules().stream()).map(Rule::getName).sorted();
     }
 
-    private static PMDConfiguration createPmdConfiguration(final PmdConfig config) {
+    private static PMDConfiguration createPmdConfiguration(final PmdConfig config) throws MojoFailureException {
         final PMDConfiguration configuration = new PMDConfiguration();
         final Path targetPath = Paths.get(config.targetPath());
         configuration.setAnalysisCacheLocation(targetPath.resolve("pmd.cache").toString());
         configuration.addInputPath(Paths.get(config.project().getBuild().getSourceDirectory()));
         configuration.addInputPath(Paths.get(config.project().getBuild().getTestSourceDirectory()));
-        configuration.prependAuxClasspath(targetPath.resolve("classes").toString());
+        try {
+            final String classpath = String.join(File.pathSeparator, config.project().getTestClasspathElements());
+            configuration.prependAuxClasspath(classpath);
+        } catch (DependencyResolutionRequiredException e) {
+            throw new MojoFailureException("Failed to get the project's test classpath elements.", e);
+        }
         return configuration;
     }
 

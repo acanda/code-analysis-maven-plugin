@@ -4,7 +4,6 @@ import ch.acanda.maven.coan.checkstyle.CheckstyleInspector;
 import ch.acanda.maven.coan.pmd.PmdInspector;
 import ch.acanda.maven.coan.report.LogReport;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.project.MavenProject;
 
@@ -15,8 +14,10 @@ import java.util.concurrent.Future;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.joining;
+import static org.apache.maven.plugins.annotations.LifecyclePhase.VERIFY;
+import static org.apache.maven.plugins.annotations.ResolutionScope.TEST;
 
-@Mojo(name = "analyse", defaultPhase = LifecyclePhase.VERIFY, threadSafe = true)
+@Mojo(name = "analyse", defaultPhase = VERIFY, threadSafe = true, requiresDependencyResolution = TEST)
 public class AnalyseMojo extends AbstractCoanMojo {
 
     @Override
