@@ -5,6 +5,7 @@ import ch.acanda.maven.coan.Inspection;
 import net.sourceforge.pmd.PMDConfiguration;
 import net.sourceforge.pmd.PmdAnalysis;
 import net.sourceforge.pmd.lang.rule.Rule;
+import net.sourceforge.pmd.lang.rule.RulePriority;
 import net.sourceforge.pmd.lang.rule.RuleSet;
 import net.sourceforge.pmd.lang.rule.RuleSetLoader;
 import net.sourceforge.pmd.reporting.Report;
@@ -85,8 +86,11 @@ public class PmdInspector {
         }
     }
 
-    private static List<RuleSet> loadRuleSets(final Path config) {
-        return List.of(new RuleSetLoader().loadFromResource(config.toString()));
+    private List<RuleSet> loadRuleSets(final Path ruleSetFile) {
+        final PMDConfiguration config = new PMDConfiguration();
+        config.setMinimumPriority(RulePriority.LOW);
+        config.setReporter(new MavenLogReporter(log));
+        return List.of(RuleSetLoader.fromPmdConfig(config).loadFromResource(ruleSetFile.toString()));
     }
 
     private static Stream<String> getRules(final List<RuleSet> ruleSets) {
