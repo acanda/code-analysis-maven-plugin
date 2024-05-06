@@ -66,6 +66,7 @@
     <exclude name="AvoidDuplicateLiterals"/>
     <exclude name="AvoidFieldNameMatchingMethodName"/>
     <exclude name="AvoidLiteralsInIfCondition"/>
+    <exclude name="CloseResource"/>
     <exclude name="EmptyCatchBlock"/>
     <exclude name="MissingSerialVersionUID"/>
     <exclude name="ProperLogger"/>
@@ -82,6 +83,11 @@
     <properties>
       <property name="ignoreMagicNumbers" value="-1,0,1,2,' ','\r','\n'"/>
       <property name="ignoreExpressions" value="false"/>
+    </properties>
+  </rule>
+  <rule ref="category/java/errorprone.xml/CloseResource">
+    <properties>
+      <property name="closeTargets" value="shutdown"/>
     </properties>
   </rule>
   <rule ref="category/java/errorprone.xml/EmptyCatchBlock">
