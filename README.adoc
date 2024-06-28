@@ -1,5 +1,5 @@
 = Coan - Code Analysis Maven Plugin
-:plugin-version: 1.7.0
+:plugin-version: 1.8.0
 :idprefix:
 :idseparator: -
 
