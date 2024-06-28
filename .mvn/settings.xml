@@ -10,7 +10,7 @@
     <servers>
         <server>
             <id>ossrh</id>
-            <username>acanda</username>
+            <username>zuay0An7</username>
             <password>${ossrh.password}</password>
         </server>
     </servers>
