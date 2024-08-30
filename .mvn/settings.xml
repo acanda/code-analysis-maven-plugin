@@ -24,14 +24,11 @@
             </activation>
             <properties>
                 <gpg.keyname>53CD43B2</gpg.keyname>
-                <gpg.passphrase>${gpg.password}</gpg.passphrase>
-                <gpg.executable>gpg2</gpg.executable>
+                <gpg.executable>gpg</gpg.executable>
                 <gpg.defaultKeyring>false</gpg.defaultKeyring>
                 <gpg.useagent>true</gpg.useagent>
                 <gpg.lockMode>never</gpg.lockMode>
                 <gpg.homedir>${gpg.homedir}</gpg.homedir>
-                <gpg.publicKeyring>${gpg.homedir}/pubring.gpg</gpg.publicKeyring>
-                <gpg.secretKeyring>${gpg.homedir}/secring.gpg</gpg.secretKeyring>
             </properties>
         </profile>
     </profiles>
