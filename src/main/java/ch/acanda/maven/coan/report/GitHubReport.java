@@ -178,7 +178,6 @@ public class GitHubReport {
             case LOW -> ":warning:";
             case LOWEST -> ":speak_no_evil:";
             case IGNORE -> ":information_source:";
-            default -> ":grey_question:";
         };
     }
 }
