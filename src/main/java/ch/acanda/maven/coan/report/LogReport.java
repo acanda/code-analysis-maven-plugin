@@ -51,7 +51,7 @@ public class LogReport {
         // parentheses. We need the period because IntelliJ only creates links
         // if it finds the pattern ". (fileName:line)" in the console.
         final String description = ensurePeriod(issue.description())
-            .replaceAll("\\s*\\(", ", ")
+            .replaceAll("\\s*+\\(", ", ")
             .replaceAll("\\)", "");
         return format(ENGLISH, issueTemplate, name, description, fileName, line);
     }
