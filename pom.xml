@@ -425,6 +425,7 @@
               <releaseProfiles>release</releaseProfiles>
               <goals>deploy</goals>
               <tagNameFormat>release/@{project.version}</tagNameFormat>
+              <projectVersionPolicyId>SemVerVersionPolicy</projectVersionPolicyId>
             </configuration>
           </plugin>
         </plugins>
