@@ -46,10 +46,14 @@
       <artifactId>pmd-dist</artifactId>
       <version>${pmd.version}</version>
       <exclusions>
-        <!-- JCommander is not needed by this plugin. -->
+        <!-- JCommander and pmd-cli are not needed by this plugin. -->
         <exclusion>
           <groupId>com.beust</groupId>
           <artifactId>jcommander</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>net.sourceforge.pmd</groupId>
+          <artifactId>pmd-cli</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -139,13 +143,6 @@
       <groupId>net.javacrumbs.json-unit</groupId>
       <artifactId>json-unit-assertj</artifactId>
       <version>4.1.0</version>
-      <scope>test</scope>
-    </dependency>
-    <!-- PMD uses an older version of gson that is incompatible with json unit. -->
-    <dependency>
-      <groupId>com.google.code.gson</groupId>
-      <artifactId>gson</artifactId>
-      <version>2.12.1</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
