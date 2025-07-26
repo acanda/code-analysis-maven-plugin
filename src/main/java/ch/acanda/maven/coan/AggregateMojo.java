@@ -42,14 +42,16 @@ public class AggregateMojo extends AbstractCoanMojo {
 
         final ExecutorService executorService = Executors.newFixedThreadPool(analysers.size());
         try {
-            final List<Future<Inspection>> runningAnalyses = executorService.invokeAll(analysers, 1, TimeUnit.HOURS);
-            final List<Inspection> analyses = runningAnalyses.stream()
+            final List<Future<Inspection>> runningInspections = executorService.invokeAll(analysers, 1, TimeUnit.HOURS);
+            final List<Inspection> inspections = runningInspections.stream()
                 .map(AggregateMojo::waitUntilFinished)
                 .collect(toList());
 
-            analyses.forEach(analysis -> LogReport.report(analysis, getProject().getBasedir().toPath(), getLog()));
-            createReports(analyses.toArray(Inspection[]::new));
-            failOnIssues(analyses);
+            inspections.forEach(inspection ->
+                LogReport.report(inspection, getProject().getBasedir().toPath(), getLog())
+            );
+            createReports(inspections.toArray(Inspection[]::new));
+            failOnIssues(inspections);
 
         } catch (final RejectedExecutionException e) {
             throw new MojoFailureException(e.getMessage(), e);
@@ -65,10 +67,10 @@ public class AggregateMojo extends AbstractCoanMojo {
 
     }
 
-    private void failOnIssues(final List<Inspection> analyses) throws MojoFailureException {
-        final boolean foundIssues = analyses.stream().anyMatch(Inspection::foundIssues);
+    private void failOnIssues(final List<Inspection> inspections) throws MojoFailureException {
+        final boolean foundIssues = inspections.stream().anyMatch(Inspection::foundIssues);
         if (isFailOnIssues() && foundIssues) {
-            final long sum = analyses.stream().mapToInt(Inspection::getNumberOfIssues).sum();
+            final long sum = inspections.stream().mapToInt(Inspection::getNumberOfIssues).sum();
             final String issues = sum == 1 ? " issue" : " issues";
             throw new MojoFailureException("Code analysis found " + sum + issues + ".");
         }

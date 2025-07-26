@@ -80,30 +80,30 @@ abstract class AbstractCoanMojo extends AbstractMojo {
         return new CheckstyleConfig(project, getLog(), getCheckstyleConfigPath(), getTargetPath());
     }
 
-    protected void createReports(final Inspection... analyses) throws MojoFailureException {
+    protected void createReports(final Inspection... inspections) throws MojoFailureException {
         final Path baseDir = getProject().getBasedir().toPath();
         final Path targetDir = Paths.get(getTargetPath());
         final String gitHubStepSummary = getGithubStepSummary();
         if (gitHubStepSummary != null) {
-            final GitHubReport report = new GitHubReport(getProject(), baseDir, analyses);
+            final GitHubReport report = new GitHubReport(getProject(), baseDir, inspections);
             final Path reportFile = Paths.get(gitHubStepSummary);
             report.appendTo(reportFile);
             getLog().info("The GitHub Code Quality report was appended to the GitHub step summary file " + reportFile);
         }
         if (reportFormats.remove(REPORT_FORMAT_HTML)) {
-            final HtmlReport report = new HtmlReport(getProject(), baseDir, analyses);
+            final HtmlReport report = new HtmlReport(getProject(), baseDir, inspections);
             final Path reportFile = targetDir.resolve("report.html");
             report.writeTo(reportFile);
             getLog().info("The HTML report is available at " + reportFile);
         }
         if (reportFormats.remove(REPORT_FORMAT_GITLAB)) {
-            final GitLabReport report = new GitLabReport(baseDir, analyses);
+            final GitLabReport report = new GitLabReport(baseDir, inspections);
             final Path reportFile = targetDir.resolve("report.gitlab.json");
             report.writeTo(reportFile);
             getLog().info("The GitLab Code Quality report is available at " + reportFile);
         }
         if (reportFormats.remove(REPORT_FORMAT_GITHUB)) {
-            final GitHubReport report = new GitHubReport(getProject(), baseDir, analyses);
+            final GitHubReport report = new GitHubReport(getProject(), baseDir, inspections);
             final Path reportFile = targetDir.resolve("report.github.md");
             report.writeTo(reportFile);
             getLog().info("The GitHub Code Quality report is available at " + reportFile);

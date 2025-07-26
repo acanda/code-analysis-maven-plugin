@@ -30,12 +30,12 @@ public class GitHubReport {
 
     private final MavenProject project;
     private final Path baseDir;
-    private final List<Inspection> analyses;
+    private final List<Inspection> inspections;
 
-    public GitHubReport(final MavenProject project, final Path baseDir, final Inspection... analyses) {
+    public GitHubReport(final MavenProject project, final Path baseDir, final Inspection... inspections) {
         this.project = project;
         this.baseDir = baseDir;
-        this.analyses = Arrays.asList(analyses);
+        this.inspections = Arrays.asList(inspections);
     }
 
     public void writeTo(final Path file) throws MojoFailureException {
@@ -74,15 +74,15 @@ public class GitHubReport {
         markdown.println();
         markdown.println();
         writeSummary(markdown);
-        writeAnalyses(markdown);
+        writeInspections(markdown);
     }
 
     private void writeSummary(final PrintWriter markdown) {
-        final boolean foundIssues = analyses.stream().anyMatch(Inspection::foundIssues);
+        final boolean foundIssues = inspections.stream().anyMatch(Inspection::foundIssues);
         if (foundIssues) {
             markdown.println("## Summary");
             markdown.println();
-            analyses.stream()
+            inspections.stream()
                 .collect(groupingBy(Inspection::toolName, summarizingLong(Inspection::getNumberOfIssues)))
                 .entrySet()
                 .stream()
@@ -100,26 +100,26 @@ public class GitHubReport {
         }
     }
 
-    private void writeAnalyses(final PrintWriter markdown) {
-        final Map<MavenProject, List<Inspection>> analysesByProject = analyses.stream()
+    private void writeInspections(final PrintWriter markdown) {
+        final Map<MavenProject, List<Inspection>> inspectionsByProject = inspections.stream()
             .filter(Inspection::foundIssues)
             .collect(groupingBy(Inspection::project));
-        final boolean includeProjectName = analysesByProject.size() > 1;
-        analysesByProject
+        final boolean includeProjectName = inspectionsByProject.size() > 1;
+        inspectionsByProject
             .entrySet()
             .stream()
             .sorted(comparing(e -> getProjectName(e.getKey())))
-            .forEachOrdered(entry -> writeAnalyses(entry.getKey(), entry.getValue(), includeProjectName, markdown));
+            .forEachOrdered(entry -> writeInspections(entry.getKey(), entry.getValue(), includeProjectName, markdown));
     }
 
-    private void writeAnalyses(final MavenProject project, final List<Inspection> analyses,
+    private void writeInspections(final MavenProject project, final List<Inspection> inspections,
         final boolean includeProjectName, final PrintWriter markdown) {
         if (includeProjectName) {
             markdown.print("## ");
             markdown.println(escapeHtml4(getProjectName(project)));
             markdown.println();
         }
-        analyses.forEach(analysis -> writeAnalysis(analysis, includeProjectName, markdown));
+        inspections.forEach(analysis -> writeAnalysis(analysis, includeProjectName, markdown));
     }
 
     private void writeAnalysis(final Inspection inspection, final boolean isLevel3, final PrintWriter markdown) {

@@ -25,7 +25,7 @@ import static java.lang.String.format;
 /**
  * Creates a code quality report for GitLab.
  * <p>
- * <a href="https://docs.gitlab.com/ee/user/project/merge_requests/code_quality.html#implementing-a-custom-tool">
+ * <a href="https://docs.gitlab.com/ci/testing/code_quality/#code-quality-report-format">
  * GitLab code quality report format
  * </a>
  * </p>
@@ -42,11 +42,11 @@ public class GitLabReport {
     );
 
     private final Path baseDir;
-    private final List<Inspection> analyses;
+    private final List<Inspection> inspections;
 
-    public GitLabReport(final Path baseDir, final Inspection... analyses) {
+    public GitLabReport(final Path baseDir, final Inspection... inspections) {
         this.baseDir = baseDir;
-        this.analyses = Arrays.asList(analyses);
+        this.inspections = Arrays.asList(inspections);
     }
 
 
@@ -58,7 +58,7 @@ public class GitLabReport {
                     .composeTo(file.toFile())
                     .startArray();
 
-            for (final Inspection inspection : analyses) {
+            for (final Inspection inspection : inspections) {
                 for (final Issue issue : inspection.issues()) {
                     composeIssue(json, inspection, issue);
                 }

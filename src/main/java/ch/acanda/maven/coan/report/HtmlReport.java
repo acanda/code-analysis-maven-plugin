@@ -25,12 +25,12 @@ public class HtmlReport {
 
     private final MavenProject project;
     private final Path baseDir;
-    private final List<Inspection> analyses;
+    private final List<Inspection> inspections;
 
-    public HtmlReport(final MavenProject project, final Path baseDir, final Inspection... analyses) {
+    public HtmlReport(final MavenProject project, final Path baseDir, final Inspection... inspections) {
         this.project = project;
         this.baseDir = baseDir;
-        this.analyses = Arrays.asList(analyses);
+        this.inspections = Arrays.asList(inspections);
     }
 
     public void writeTo(final Path file) throws MojoFailureException {
@@ -65,16 +65,16 @@ public class HtmlReport {
         }
         html.println("</h1>");
         writeSummary(html);
-        writeAnalyses(html);
+        writeInspections(html);
         html.println("</body>");
     }
 
     private void writeSummary(final PrintWriter html) {
-        final boolean foundIssues = analyses.stream().anyMatch(Inspection::foundIssues);
+        final boolean foundIssues = inspections.stream().anyMatch(Inspection::foundIssues);
         html.println("<section>");
         if (foundIssues) {
             html.println("<h2>Summary</h2>");
-            analyses.stream()
+            inspections.stream()
                 .collect(groupingBy(Inspection::toolName, summarizingLong(Inspection::getNumberOfIssues)))
                 .entrySet()
                 .stream()
@@ -92,19 +92,19 @@ public class HtmlReport {
         html.println("</section>");
     }
 
-    private void writeAnalyses(final PrintWriter html) {
-        final Map<MavenProject, List<Inspection>> analysesByProject = analyses.stream()
+    private void writeInspections(final PrintWriter html) {
+        final Map<MavenProject, List<Inspection>> inspectionsByProject = inspections.stream()
             .filter(Inspection::foundIssues)
             .collect(groupingBy(Inspection::project));
-        final boolean includeProjectName = analysesByProject.size() > 1;
-        analysesByProject
+        final boolean includeProjectName = inspectionsByProject.size() > 1;
+        inspectionsByProject
             .entrySet()
             .stream()
             .sorted(comparing(e -> getProjectName(e.getKey())))
-            .forEachOrdered(entry -> writeAnalyses(entry.getKey(), entry.getValue(), includeProjectName, html));
+            .forEachOrdered(entry -> writeInspections(entry.getKey(), entry.getValue(), includeProjectName, html));
     }
 
-    private void writeAnalyses(final MavenProject project, final List<Inspection> analyses,
+    private void writeInspections(final MavenProject project, final List<Inspection> inspections,
         final boolean includeProjectName, final PrintWriter html) {
         if (includeProjectName) {
             html.println("<section>");
@@ -113,7 +113,7 @@ public class HtmlReport {
             html.print(escapeHtml4(getProjectName(project)));
             html.println("</summary>");
         }
-        analyses.forEach(inspection -> writeAnalysis(inspection, html));
+        inspections.forEach(inspection -> writeAnalysis(inspection, html));
         if (includeProjectName) {
             html.println("</details>");
             html.println("</section>");
