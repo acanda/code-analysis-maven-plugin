@@ -9,9 +9,9 @@
     <pluginGroups/>
     <servers>
         <server>
-            <id>ossrh</id>
-            <username>zuay0An7</username>
-            <password>${ossrh.password}</password>
+            <id>central</id>
+            <username>6JmkVr</username>
+            <password>${central.password}</password>
         </server>
     </servers>
     <mirrors/>
