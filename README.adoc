@@ -12,7 +12,7 @@ It also logs the issues it finds to the console with links that are clickable an
 === Analyse a single Maven project or module
 
 You can create a report for a single Maven project or module with the goal `analyse`.
-If you put the following configuration into the parent pom of a multi-module project, then plugin will generate a separate report for each module.
+If you put the following configuration into the parent pom of a multi-module project, then the plugin will generate a separate report for each module.
 
 [source,xml,subs="attributes+"]
 ----
