@@ -5,7 +5,14 @@
 
 Coan is a code analysis Maven plugin that runs Checkstyle and PMD and generates a single page HTML report.
 You can either generate an individual report for each module or an aggregated report for all modules in a Maven project.
+
 It also logs the issues it finds to the console with links that are clickable and open the respective file in IntelliJ IDEA.
+
+Coan detects when it is run as part of a GitHub workflow and automatically appends the report to the job's summary.
+
+It also supports GitLab Code Quality reports, which you can attach as an artefact to your GitLab CI/CD job so the issues the plugin found are summarized in merge requests and the pipeline view.
+
+When run as part of a Bitbucket pipeline, the plugin automatically generates a code insight report and attaches the report to the build.
 
 == Usage
 
