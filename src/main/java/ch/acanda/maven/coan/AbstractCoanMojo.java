@@ -2,6 +2,8 @@ package ch.acanda.maven.coan;
 
 import ch.acanda.maven.coan.checkstyle.CheckstyleConfig;
 import ch.acanda.maven.coan.pmd.PmdConfig;
+import ch.acanda.maven.coan.report.BitBucketPipeline;
+import ch.acanda.maven.coan.report.BitBucketReport;
 import ch.acanda.maven.coan.report.GitHubReport;
 import ch.acanda.maven.coan.report.GitLabReport;
 import ch.acanda.maven.coan.report.HtmlReport;
@@ -23,6 +25,7 @@ abstract class AbstractCoanMojo extends AbstractMojo {
     private static final String REPORT_FORMAT_HTML = "html";
     private static final String REPORT_FORMAT_GITLAB = "gitlab";
     private static final String REPORT_FORMAT_GITHUB = "github";
+    private static final String REPORT_FORMAT_BITBUCKET = "bitbucket";
     private static final String DEFAULT_SKIP = "false";
     private static final String DEFAULT_FAIL_ON_ISSUES = "true";
     private static final String DEFAULT_TARGET_PATH = "${project.build.directory}/code-analysis";
@@ -90,6 +93,12 @@ abstract class AbstractCoanMojo extends AbstractMojo {
             report.appendTo(reportFile);
             getLog().info("The GitHub Code Quality report was appended to the GitHub step summary file " + reportFile);
         }
+        final BitBucketPipeline bitBucketPipeline = getBitBucketPipeline();
+        if (bitBucketPipeline != null) {
+            final BitBucketReport report = new BitBucketReport(getProject(), baseDir, inspections);
+            report.publishToBitBucket(bitBucketPipeline);
+            getLog().info("Published report to Bitbucket");
+        }
         if (reportFormats.remove(REPORT_FORMAT_HTML)) {
             final HtmlReport report = new HtmlReport(getProject(), baseDir, inspections);
             final Path reportFile = targetDir.resolve("report.html");
@@ -115,8 +124,28 @@ abstract class AbstractCoanMojo extends AbstractMojo {
     }
 
     private String getGithubStepSummary() {
-        final String property = System.getProperty("GITHUB_STEP_SUMMARY");
-        return property != null ? property : System.getenv("GITHUB_STEP_SUMMARY");
+        return getPropertyOrEnv("GITHUB_STEP_SUMMARY");
+    }
+
+    private BitBucketPipeline getBitBucketPipeline() {
+        final String repoOwner = getPropertyOrEnv("BITBUCKET_REPO_OWNER");
+        final String repoSlug = getPropertyOrEnv("BITBUCKET_REPO_SLUG");
+        final String commit = getPropertyOrEnv("BITBUCKET_COMMIT");
+        if (repoOwner == null || repoSlug == null || commit == null) {
+            return null;
+        }
+        return new BitBucketPipeline(
+            repoOwner,
+            repoSlug,
+            commit,
+            "http://api.bitbucket.org",
+            "http://host.docker.internal:29418"
+        );
+    }
+
+    private String getPropertyOrEnv(final String name) {
+        final String property = System.getProperty(name);
+        return property != null && !property.isBlank() ? property : System.getenv(name);
     }
 
 }
