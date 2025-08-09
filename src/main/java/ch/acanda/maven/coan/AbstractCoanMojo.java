@@ -25,7 +25,6 @@ abstract class AbstractCoanMojo extends AbstractMojo {
     private static final String REPORT_FORMAT_HTML = "html";
     private static final String REPORT_FORMAT_GITLAB = "gitlab";
     private static final String REPORT_FORMAT_GITHUB = "github";
-    private static final String REPORT_FORMAT_BITBUCKET = "bitbucket";
     private static final String DEFAULT_SKIP = "false";
     private static final String DEFAULT_FAIL_ON_ISSUES = "true";
     private static final String DEFAULT_TARGET_PATH = "${project.build.directory}/code-analysis";
@@ -95,7 +94,7 @@ abstract class AbstractCoanMojo extends AbstractMojo {
         }
         final BitBucketPipeline bitBucketPipeline = getBitBucketPipeline();
         if (bitBucketPipeline != null) {
-            final BitBucketReport report = new BitBucketReport(getProject(), baseDir, inspections);
+            final BitBucketReport report = new BitBucketReport(baseDir, inspections);
             report.publishToBitBucket(bitBucketPipeline);
             getLog().info("Published report to Bitbucket");
         }
@@ -139,7 +138,7 @@ abstract class AbstractCoanMojo extends AbstractMojo {
             repoSlug,
             commit,
             "http://api.bitbucket.org",
-            "http://host.docker.internal:29418"
+            "localhost:29418"
         );
     }
 

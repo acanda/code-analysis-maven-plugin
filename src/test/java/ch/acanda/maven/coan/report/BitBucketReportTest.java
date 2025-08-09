@@ -26,6 +26,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.verify;
  * This test verifies that the report makes the REST requests to the BitBucket API.
  */
 @Disabled("This does not yet work")
+@SuppressWarnings("PMD")
 class BitBucketReportTest {
 
     @Test
@@ -53,7 +54,7 @@ class BitBucketReportTest {
             final Path hello = javaMain.resolve("Hello.java");
             final Path world = javaMain.resolve("World.java");
 
-            final BitBucketReport report = new BitBucketReport(project, baseDir,
+            final BitBucketReport report = new BitBucketReport(baseDir,
                 inspection("ABC", List.of(
                     issue(hello, 12, "IssueA", "Issue A description", Issue.Severity.HIGHEST),
                     issue(world, 25, "IssueB", "Issue B description", Issue.Severity.HIGH),
