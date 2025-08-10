@@ -50,7 +50,7 @@ public class BitbucketReportClient {
         return ProxySelector.getDefault();
     }
 
-    public void creatOrUpdateReport(final Report report) throws IOException, InterruptedException {
+    public void createOrUpdateReport(final Report report) throws IOException, InterruptedException {
         final String payload =
             """
             {
@@ -108,7 +108,7 @@ public class BitbucketReportClient {
             """
             {
               "external_id": "%s",
-              "title": "%",
+              "title": "%s",
               "annotation_type": "CODE_SMELL",
               "summary": "%s",
               "severity": "%s",
@@ -116,7 +116,7 @@ public class BitbucketReportClient {
               "line": %d
             }
             """.formatted(
-                UUID.randomUUID(),
+                annotation.externalId(),
                 escapeJson(annotation.title()),
                 escapeJson(annotation.summary()),
                 annotation.severity(),
@@ -141,6 +141,7 @@ public class BitbucketReportClient {
     }
 
     public record Annotation(
+        UUID externalId,
         String title,
         String summary,
         AnnotationSeverity severity,

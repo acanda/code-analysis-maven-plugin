@@ -7,15 +7,17 @@ import ch.acanda.maven.coan.report.bitbucket.BitbucketReportClient;
 import org.apache.maven.plugin.MojoFailureException;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import static ch.acanda.maven.coan.report.bitbucket.BitbucketReportClient.Result.FAILED;
 import static ch.acanda.maven.coan.report.bitbucket.BitbucketReportClient.Result.PASSED;
 
 /**
- * Creates a code insights report for BitBucket.
+ * Creates a code insights report for BitBucket and publishes it to the
  * <a href="https://developer.atlassian.com/cloud/bitbucket/rest/api-group-reports/#api-group-reports">BitBucket Reports API</a>
  */
 public class BitBucketReport {
@@ -31,12 +33,12 @@ public class BitBucketReport {
     public void publishToBitBucket(final BitBucketPipeline pipeline) throws MojoFailureException {
         final BitbucketReportClient client = new BitbucketReportClient(pipeline);
         try {
-            client.creatOrUpdateReport(createReport());
+            client.createOrUpdateReport(createReport());
             client.createOrUpdateAnnotations(createAnnotations());
         } catch (final InterruptedException e) {
             Thread.currentThread().interrupt();
         } catch (final IOException e) {
-            throw new MojoFailureException("Failed to publish BitBucket Code Insights report: " + e.getMessage(), e);
+            throw new MojoFailureException("Failed to publish BitBucket Code Insights report", e);
         }
     }
 
@@ -62,11 +64,15 @@ public class BitBucketReport {
     }
 
     private BitbucketReportClient.Annotation createAnnotation(final Inspection inspection, final Issue issue) {
+        final String path = getPath(issue.file());
+        final String externalId =
+            "%s:%s:%s:%d:%d".formatted(inspection.toolName(), issue.name(), path, issue.line(), issue.column());
         return new BitbucketReportClient.Annotation(
+            UUID.nameUUIDFromBytes(externalId.getBytes(StandardCharsets.UTF_8)),
             issue.name(),
             "[%s] %s".formatted(inspection.toolName(), issue.description()),
             getSeverity(issue.severity()),
-            getPath(issue.file()),
+            path,
             issue.line()
         );
     }
