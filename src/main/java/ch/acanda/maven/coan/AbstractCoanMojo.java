@@ -2,11 +2,11 @@ package ch.acanda.maven.coan;
 
 import ch.acanda.maven.coan.checkstyle.CheckstyleConfig;
 import ch.acanda.maven.coan.pmd.PmdConfig;
-import ch.acanda.maven.coan.report.BitBucketPipeline;
 import ch.acanda.maven.coan.report.BitBucketReport;
 import ch.acanda.maven.coan.report.GitHubReport;
 import ch.acanda.maven.coan.report.GitLabReport;
 import ch.acanda.maven.coan.report.HtmlReport;
+import ch.acanda.maven.coan.report.bitbucket.Pipeline;
 import ch.acanda.maven.coan.version.Versions;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -92,7 +92,7 @@ abstract class AbstractCoanMojo extends AbstractMojo {
             report.appendTo(reportFile);
             getLog().info("The GitHub Code Quality report was appended to the GitHub step summary file " + reportFile);
         }
-        final BitBucketPipeline bitBucketPipeline = getBitBucketPipeline();
+        final Pipeline bitBucketPipeline = getBitbucketPipeline();
         if (bitBucketPipeline != null) {
             final BitBucketReport report = new BitBucketReport(baseDir, inspections);
             report.publishToBitBucket(bitBucketPipeline);
@@ -126,14 +126,17 @@ abstract class AbstractCoanMojo extends AbstractMojo {
         return getPropertyOrEnv("GITHUB_STEP_SUMMARY");
     }
 
-    private BitBucketPipeline getBitBucketPipeline() {
+    private Pipeline getBitbucketPipeline() {
         final String repoOwner = getPropertyOrEnv("BITBUCKET_REPO_OWNER");
         final String repoSlug = getPropertyOrEnv("BITBUCKET_REPO_SLUG");
         final String commit = getPropertyOrEnv("BITBUCKET_COMMIT");
         if (repoOwner == null || repoSlug == null || commit == null) {
             return null;
         }
-        return new BitBucketPipeline(
+        // The proxy configuration allows us to use the Bitbucket Reports API
+        // without extra authentication, see
+        // https://support.atlassian.com/bitbucket-cloud/docs/code-insights/
+        return new Pipeline(
             repoOwner,
             repoSlug,
             commit,

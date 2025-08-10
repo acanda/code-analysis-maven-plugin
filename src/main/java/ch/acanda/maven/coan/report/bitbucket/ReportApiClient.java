@@ -1,7 +1,5 @@
 package ch.acanda.maven.coan.report.bitbucket;
 
-import ch.acanda.maven.coan.report.BitBucketPipeline;
-
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.ProxySelector;
@@ -12,22 +10,21 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.List;
-import java.util.UUID;
 
 import static org.apache.commons.text.StringEscapeUtils.escapeJson;
 
-public class BitbucketReportClient {
+public class ReportApiClient {
 
     private final HttpClient client;
     private final String reportUrl;
 
-    public BitbucketReportClient(final BitBucketPipeline pipeline) {
+    public ReportApiClient(final Pipeline pipeline) {
         client = createClient(pipeline);
         reportUrl = "%s/2.0/repositories/%s/%s/commit/%s/reports/code-analysis-maven-plugin"
             .formatted(pipeline.apiHost(), pipeline.repoOwner(), pipeline.repoSlug(), pipeline.commit());
     }
 
-    private static HttpClient createClient(final BitBucketPipeline pipeline) {
+    private static HttpClient createClient(final Pipeline pipeline) {
         return HttpClient.newBuilder()
             .version(HttpClient.Version.HTTP_2)
             .connectTimeout(Duration.ofSeconds(30))
@@ -128,30 +125,6 @@ public class BitbucketReportClient {
 
     private boolean isOk(final int status) {
         return status >= 200 && status < 300;
-    }
-
-    public record Report(
-        String details,
-        Result result
-    ) {
-    }
-
-    public enum Result {
-        PASSED, FAILED
-    }
-
-    public record Annotation(
-        UUID externalId,
-        String title,
-        String summary,
-        AnnotationSeverity severity,
-        String path,
-        int line
-    ) {
-    }
-
-    public enum AnnotationSeverity {
-        CRITICAL, HIGH, MEDIUM, LOW
     }
 
 }

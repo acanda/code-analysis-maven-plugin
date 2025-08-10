@@ -1,6 +1,6 @@
-package ch.acanda.maven.coan.report;
+package ch.acanda.maven.coan.report.bitbucket;
 
-public record BitBucketPipeline(
+public record Pipeline(
     String repoOwner,
     String repoSlug,
     String commit,

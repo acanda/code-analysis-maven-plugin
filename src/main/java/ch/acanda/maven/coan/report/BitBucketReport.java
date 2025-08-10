@@ -3,7 +3,11 @@ package ch.acanda.maven.coan.report;
 import ch.acanda.maven.coan.Inspection;
 import ch.acanda.maven.coan.Issue;
 import ch.acanda.maven.coan.Issue.Severity;
-import ch.acanda.maven.coan.report.bitbucket.BitbucketReportClient;
+import ch.acanda.maven.coan.report.bitbucket.Annotation;
+import ch.acanda.maven.coan.report.bitbucket.AnnotationSeverity;
+import ch.acanda.maven.coan.report.bitbucket.Pipeline;
+import ch.acanda.maven.coan.report.bitbucket.Report;
+import ch.acanda.maven.coan.report.bitbucket.ReportApiClient;
 import org.apache.maven.plugin.MojoFailureException;
 
 import java.io.IOException;
@@ -13,8 +17,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-import static ch.acanda.maven.coan.report.bitbucket.BitbucketReportClient.Result.FAILED;
-import static ch.acanda.maven.coan.report.bitbucket.BitbucketReportClient.Result.PASSED;
+import static ch.acanda.maven.coan.report.bitbucket.Result.FAILED;
+import static ch.acanda.maven.coan.report.bitbucket.Result.PASSED;
 
 /**
  * Creates a code insights report for BitBucket and publishes it to the
@@ -30,8 +34,8 @@ public class BitBucketReport {
         this.inspections = Arrays.asList(inspections);
     }
 
-    public void publishToBitBucket(final BitBucketPipeline pipeline) throws MojoFailureException {
-        final BitbucketReportClient client = new BitbucketReportClient(pipeline);
+    public void publishToBitBucket(final Pipeline pipeline) throws MojoFailureException {
+        final ReportApiClient client = new ReportApiClient(pipeline);
         try {
             client.createOrUpdateReport(createReport());
             client.createOrUpdateAnnotations(createAnnotations());
@@ -42,20 +46,20 @@ public class BitBucketReport {
         }
     }
 
-    private BitbucketReportClient.Report createReport() {
+    private Report createReport() {
         final int numberOfIssues = inspections.stream().mapToInt(Inspection::getNumberOfIssues).sum();
         final String issues = switch (numberOfIssues) {
             case 0 -> "no issues";
             case 1 -> "one issue";
             default -> numberOfIssues + " issues";
         };
-        return new BitbucketReportClient.Report(
+        return new Report(
             "The Code Analysis Maven Plugin found %s.".formatted(issues),
             numberOfIssues == 0 ? PASSED : FAILED
         );
     }
 
-    private List<BitbucketReportClient.Annotation> createAnnotations() {
+    private List<Annotation> createAnnotations() {
         return inspections.stream().flatMap(inspection ->
             inspection.issues().stream().map(issue ->
                 createAnnotation(inspection, issue)
@@ -63,11 +67,11 @@ public class BitBucketReport {
         ).toList();
     }
 
-    private BitbucketReportClient.Annotation createAnnotation(final Inspection inspection, final Issue issue) {
+    private Annotation createAnnotation(final Inspection inspection, final Issue issue) {
         final String path = getPath(issue.file());
         final String externalId =
             "%s:%s:%s:%d:%d".formatted(inspection.toolName(), issue.name(), path, issue.line(), issue.column());
-        return new BitbucketReportClient.Annotation(
+        return new Annotation(
             UUID.nameUUIDFromBytes(externalId.getBytes(StandardCharsets.UTF_8)),
             issue.name(),
             "[%s] %s".formatted(inspection.toolName(), issue.description()),
@@ -77,12 +81,12 @@ public class BitBucketReport {
         );
     }
 
-    private BitbucketReportClient.AnnotationSeverity getSeverity(final Severity severity) {
+    private AnnotationSeverity getSeverity(final Severity severity) {
         return switch (severity) {
-            case HIGHEST -> BitbucketReportClient.AnnotationSeverity.CRITICAL;
-            case HIGH -> BitbucketReportClient.AnnotationSeverity.HIGH;
-            case MEDIUM -> BitbucketReportClient.AnnotationSeverity.MEDIUM;
-            case LOW, LOWEST, IGNORE -> BitbucketReportClient.AnnotationSeverity.LOW;
+            case HIGHEST -> AnnotationSeverity.CRITICAL;
+            case HIGH -> AnnotationSeverity.HIGH;
+            case MEDIUM -> AnnotationSeverity.MEDIUM;
+            case LOW, LOWEST, IGNORE -> AnnotationSeverity.LOW;
         };
     }
 
