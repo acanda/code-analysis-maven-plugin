@@ -16,13 +16,15 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.IntStream;
 
 import static ch.acanda.maven.coan.report.bitbucket.Result.FAILED;
 import static ch.acanda.maven.coan.report.bitbucket.Result.PASSED;
 
 /**
  * Creates a code insights report for BitBucket and publishes it to the
- * <a href="https://developer.atlassian.com/cloud/bitbucket/rest/api-group-reports/#api-group-reports">BitBucket Reports API</a>
+ * <a href="https://developer.atlassian.com/cloud/bitbucket/rest/api-group-reports/#api-group-reports">BitBucket Reports
+ * API</a>
  */
 public class BitBucketReport {
 
@@ -38,7 +40,9 @@ public class BitBucketReport {
         final ReportApiClient client = new ReportApiClient(pipeline);
         try {
             client.createOrUpdateReport(createReport());
-            client.createOrUpdateAnnotations(createAnnotations());
+            for (final List<Annotation> annotations : createPartitionedAnnotations()) {
+                client.createOrUpdateAnnotations(annotations);
+            }
         } catch (final InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new MojoFailureException("Publishing the BitBucket Code Insights report was interrupted", e);
@@ -60,12 +64,29 @@ public class BitBucketReport {
         );
     }
 
-    private List<Annotation> createAnnotations() {
-        return inspections.stream().flatMap(inspection ->
+    /**
+     * The BitBucket API only allows a maximum of 100 annotations per request,
+     * so we need to partition the annotations into smaller lists.
+     */
+    private List<List<Annotation>> createPartitionedAnnotations() {
+        final List<Annotation> allAnnotations = inspections.stream().flatMap(inspection ->
             inspection.issues().stream().map(issue ->
                 createAnnotation(inspection, issue)
             )
         ).toList();
+        return partition(allAnnotations, 100);
+    }
+
+    private List<List<Annotation>> partition(final List<Annotation> list, final int size) {
+        final int listSize = list.size();
+        return IntStream.range(0, (listSize + size - 1) / size)
+            .mapToObj(i ->
+                list.subList(
+                    i * size,
+                    Math.min(listSize, (i + 1) * size)
+                )
+            )
+            .toList();
     }
 
     private Annotation createAnnotation(final Inspection inspection, final Issue issue) {

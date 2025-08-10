@@ -13,10 +13,12 @@ import org.junit.jupiter.api.io.TempDir;
 
 import java.nio.file.Path;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
+import static com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.put;
@@ -33,25 +35,18 @@ class BitbucketReportTest {
     private static final boolean IGNORE_ARRAY_ORDER = true;
     private static final boolean FAIL_ON_EXTRA_ELEMENTS = false;
 
+    private static final String WORKSPACE = "acanda";
+    private static final String REPO_SLUG = "repo";
+    private static final String COMMIT = "1234abcd";
+    private static final String REPORT_ID = "code-analysis-maven-plugin";
+    private static final String REPORTS_PATH =
+        "/2.0/repositories/%s/%s/commit/%s/reports/%s".formatted(WORKSPACE, REPO_SLUG, COMMIT, REPORT_ID);
+    private static final String ANNOTATIONS_PATH = REPORTS_PATH + "/annotations";
+
     @Test
     void testPublishToBitbucket(@TempDir final Path tempDir) throws MojoFailureException {
-
-        final String workspace = "acanda";
-        final String repoSlug = "repo";
-        final String commit = "1234abcd";
-        final String reportId = "code-analysis-maven-plugin";
-
-        final WireMockServer server = new WireMockServer(WireMockConfiguration.wireMockConfig().dynamicPort());
-        server.start();
+        final WireMockServer server = startMockServer();
         try {
-
-            final String host = "http://localhost:" + server.port();
-            WireMock.configureFor("localhost", server.port());
-            final String reportsPath = "/2.0/repositories/%s/%s/commit/%s/reports/%s"
-                .formatted(workspace, repoSlug, commit, reportId);
-            server.stubFor(put(reportsPath).willReturn(aResponse().withStatus(200)));
-            final String annotationsPath = reportsPath + "/annotations";
-            server.stubFor(post(annotationsPath).willReturn(aResponse().withStatus(200)));
 
             final Path baseDir = tempDir.resolve("baseDir");
             final Path javaMain = baseDir.resolve("src").resolve("main").resolve("java");
@@ -69,12 +64,10 @@ class BitbucketReportTest {
                 ))
             );
 
-            final Pipeline pipeline =
-                new Pipeline(workspace, repoSlug, commit, host, null);
-            report.publishToBitBucket(pipeline);
+            report.publishToBitBucket(createPipeline(server));
 
             // Verify the report request
-            verify(putRequestedFor(urlPathMatching(reportsPath))
+            verify(putRequestedFor(urlPathMatching(REPORTS_PATH))
                 .withHeader("Content-Type", equalTo("application/json"))
                 .withRequestBody(equalToJson(
                     """
@@ -89,7 +82,7 @@ class BitbucketReportTest {
                 )));
 
             // Verify the annotations request
-            verify(postRequestedFor(urlPathMatching(annotationsPath))
+            verify(postRequestedFor(urlPathMatching(ANNOTATIONS_PATH))
                 .withHeader("Content-Type", equalTo("application/json"))
                 .withRequestBody(equalToJson(
                     """
@@ -151,7 +144,43 @@ class BitbucketReportTest {
         } finally {
             server.stop();
         }
+    }
 
+    @Test
+    void shouldChunkAnnotationsWhenMoreThan100Issues(@TempDir final Path tempDir) throws Exception {
+        final WireMockServer server = startMockServer();
+        try {
+            final List<Issue> issues = IntStream.range(0, 150)
+                .mapToObj(i -> issue(tempDir.resolve("A.java"), i, "N", "D", Issue.Severity.MEDIUM))
+                .toList();
+            final BitBucketReport report = new BitBucketReport(tempDir, inspection("ABC", issues));
+            report.publishToBitBucket(createPipeline(server));
+
+            // Verify that createOrUpdateAnnotations() was called twice,
+            // once with 100 annotations and once with 50 annotations.
+            verify(postRequestedFor(urlPathMatching(ANNOTATIONS_PATH))
+                .withRequestBody(matchingJsonPath("$.length()", equalTo("100"))));
+
+            verify(postRequestedFor(urlPathMatching(ANNOTATIONS_PATH))
+                .withRequestBody(matchingJsonPath("$.length()", equalTo("50"))));
+
+            server.checkForUnmatchedRequests();
+        } finally {
+            server.stop();
+        }
+    }
+
+    private static WireMockServer startMockServer() {
+        final WireMockServer server = new WireMockServer(WireMockConfiguration.wireMockConfig().dynamicPort());
+        server.start();
+        WireMock.configureFor("localhost", server.port());
+        server.stubFor(put(REPORTS_PATH).willReturn(aResponse().withStatus(200)));
+        server.stubFor(post(ANNOTATIONS_PATH).willReturn(aResponse().withStatus(200)));
+        return server;
+    }
+
+    private static Pipeline createPipeline(final WireMockServer server) {
+        return new Pipeline(WORKSPACE, REPO_SLUG, COMMIT, "http://localhost:" + server.port(), null);
     }
 
     private static Inspection inspection(final String tool, final List<? extends Issue> issues) {
