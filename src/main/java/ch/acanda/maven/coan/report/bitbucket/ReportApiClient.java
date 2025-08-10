@@ -117,7 +117,7 @@ public class ReportApiClient {
                 escapeJson(annotation.title()),
                 escapeJson(annotation.summary()),
                 annotation.severity(),
-                annotation.path(),
+                escapeJson(annotation.path()),
                 annotation.line()
             )
         ).toList();
