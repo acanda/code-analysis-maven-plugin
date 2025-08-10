@@ -41,8 +41,9 @@ public class BitBucketReport {
             client.createOrUpdateAnnotations(createAnnotations());
         } catch (final InterruptedException e) {
             Thread.currentThread().interrupt();
+            throw new MojoFailureException("Publishing the BitBucket Code Insights report was interrupted", e);
         } catch (final IOException e) {
-            throw new MojoFailureException("Failed to publish BitBucket Code Insights report", e);
+            throw new MojoFailureException("Failed to publish the BitBucket Code Insights report", e);
         }
     }
 
