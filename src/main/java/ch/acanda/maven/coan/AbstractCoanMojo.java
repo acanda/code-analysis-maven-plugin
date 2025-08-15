@@ -2,9 +2,11 @@ package ch.acanda.maven.coan;
 
 import ch.acanda.maven.coan.checkstyle.CheckstyleConfig;
 import ch.acanda.maven.coan.pmd.PmdConfig;
+import ch.acanda.maven.coan.report.BitBucketReport;
 import ch.acanda.maven.coan.report.GitHubReport;
 import ch.acanda.maven.coan.report.GitLabReport;
 import ch.acanda.maven.coan.report.HtmlReport;
+import ch.acanda.maven.coan.report.bitbucket.Pipeline;
 import ch.acanda.maven.coan.version.Versions;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -90,6 +92,12 @@ abstract class AbstractCoanMojo extends AbstractMojo {
             report.appendTo(reportFile);
             getLog().info("The GitHub Code Quality report was appended to the GitHub step summary file " + reportFile);
         }
+        final Pipeline bitBucketPipeline = getBitbucketPipeline();
+        if (bitBucketPipeline != null) {
+            final BitBucketReport report = new BitBucketReport(baseDir, inspections);
+            report.publishToBitBucket(bitBucketPipeline);
+            getLog().info("Published report to Bitbucket");
+        }
         if (reportFormats.remove(REPORT_FORMAT_HTML)) {
             final HtmlReport report = new HtmlReport(getProject(), baseDir, inspections);
             final Path reportFile = targetDir.resolve("report.html");
@@ -115,8 +123,31 @@ abstract class AbstractCoanMojo extends AbstractMojo {
     }
 
     private String getGithubStepSummary() {
-        final String property = System.getProperty("GITHUB_STEP_SUMMARY");
-        return property != null ? property : System.getenv("GITHUB_STEP_SUMMARY");
+        return getPropertyOrEnv("GITHUB_STEP_SUMMARY");
+    }
+
+    private Pipeline getBitbucketPipeline() {
+        final String repoOwner = getPropertyOrEnv("BITBUCKET_REPO_OWNER");
+        final String repoSlug = getPropertyOrEnv("BITBUCKET_REPO_SLUG");
+        final String commit = getPropertyOrEnv("BITBUCKET_COMMIT");
+        if (repoOwner == null || repoSlug == null || commit == null) {
+            return null;
+        }
+        // The proxy configuration allows us to use the Bitbucket Reports API
+        // without extra authentication, see
+        // https://support.atlassian.com/bitbucket-cloud/docs/code-insights/
+        return new Pipeline(
+            repoOwner,
+            repoSlug,
+            commit,
+            "http://api.bitbucket.org",
+            "localhost:29418"
+        );
+    }
+
+    private String getPropertyOrEnv(final String name) {
+        final String property = System.getProperty(name);
+        return property != null && !property.isBlank() ? property : System.getenv(name);
     }
 
 }
