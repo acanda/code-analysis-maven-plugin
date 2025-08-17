@@ -32,6 +32,8 @@
       ${project.build.directory}/site/jacoco/jacoco.xml,
       ${project.build.directory}/site/jacoco-it/jacoco.xml
     </sonar.coverage.jacoco.xmlReportPaths>
+    <!-- AbstractCoanMojo.java is tested by Maven Tests which do record coverage data. -->
+    <sonar.coverage.exclusions>**/AbstractCoanMojo.java</sonar.coverage.exclusions>
   </properties>
 
   <dependencies>
@@ -460,7 +462,6 @@
               </formats>
             </configuration>
           </plugin>
-
         </plugins>
       </build>
     </profile>
