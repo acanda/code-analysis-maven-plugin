@@ -28,4 +28,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./mvnw -B -Pcoverage verify org.sonarsource.scanner.maven:sonar-maven-plugin:5.1.0.4751:sonar -Ddependency-check.skip=true -Dpmd.skip=true -Dcheckstyle.skip=true
+        run: ./mvnw -B -Pcoverage verify org.sonarsource.scanner.maven:sonar-maven-plugin:5.2.0.4988:sonar -Ddependency-check.skip=true -Dpmd.skip=true -Dcheckstyle.skip=true
