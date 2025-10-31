@@ -21,7 +21,7 @@
     <junit.version>6.0.0</junit.version>
     <itf.version>0.13.1</itf.version>
     <checkstyle.version>12.1.1</checkstyle.version>
-    <pmd.version>7.17.0</pmd.version>
+    <pmd.version>7.18.0</pmd.version>
     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     <sonar.organization>acanda</sonar.organization>
     <sonar.projectKey>acanda_code-analysis-maven-plugin</sonar.projectKey>
