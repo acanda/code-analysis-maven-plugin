@@ -20,7 +20,6 @@ import java.util.concurrent.TimeoutException;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.joining;
-import static java.util.stream.Collectors.toList;
 
 @Mojo(name = "aggregate", aggregator = true, threadSafe = true)
 public class AggregateMojo extends AbstractCoanMojo {
@@ -38,13 +37,13 @@ public class AggregateMojo extends AbstractCoanMojo {
                 () -> new PmdInspector(assemblePmdConfig(reactorProject)).inspect(),
                 () -> new CheckstyleInspector(assembleCheckstyleConfig(reactorProject)).inspect()
             ))
-            .collect(toList());
+            .toList();
 
         try (ExecutorService executorService = Executors.newFixedThreadPool(analysers.size())) {
             final List<Future<Inspection>> runningInspections = executorService.invokeAll(analysers, 1, TimeUnit.HOURS);
             final List<Inspection> inspections = runningInspections.stream()
                 .map(AggregateMojo::waitUntilFinished)
-                .collect(toList());
+                .toList();
 
             inspections.forEach(inspection ->
                 LogReport.report(inspection, getProject().getBasedir().toPath(), getLog())
