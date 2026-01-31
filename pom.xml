@@ -20,7 +20,7 @@
     <maven.version>3.9.12</maven.version>
     <junit.version>6.0.2</junit.version>
     <itf.version>0.13.1</itf.version>
-    <checkstyle.version>13.0.0</checkstyle.version>
+    <checkstyle.version>13.1.0</checkstyle.version>
     <pmd.version>7.21.0</pmd.version>
     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     <sonar.organization>acanda</sonar.organization>
