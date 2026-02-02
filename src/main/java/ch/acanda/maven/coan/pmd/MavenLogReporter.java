@@ -11,7 +11,7 @@ class MavenLogReporter implements PmdReporter {
     private final Log log;
     private int errors;
 
-    public MavenLogReporter(final Log log) {
+    MavenLogReporter(final Log log) {
         this.log = log;
     }
 
