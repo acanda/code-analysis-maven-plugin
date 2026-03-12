@@ -17,7 +17,7 @@
     <java.version>21</java.version>
     <maven.compiler.release>${java.version}</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.version>3.9.13</maven.version>
+    <maven.version>3.9.14</maven.version>
     <junit.version>6.0.3</junit.version>
     <itf.version>0.13.1</itf.version>
     <checkstyle.version>13.3.0</checkstyle.version>
