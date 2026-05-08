@@ -22,8 +22,7 @@ public class AnalyseMojo extends AbstractCoanMojo {
 
     @Override
     protected void analyseCode() throws MojoFailureException {
-        final ExecutorService executorService = Executors.newFixedThreadPool(2);
-        try {
+        try (ExecutorService executorService = Executors.newFixedThreadPool(2)) {
             final MavenProject project = getProject();
             final PmdInspector pmdInspector = new PmdInspector(assemblePmdConfig(project));
             final CheckstyleInspector checkstyleInspector = new CheckstyleInspector(assembleCheckstyleConfig(project));
@@ -44,8 +43,6 @@ public class AnalyseMojo extends AbstractCoanMojo {
         } catch (final InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new MojoFailureException(e.getMessage(), e);
-        } finally {
-            executorService.shutdown();
         }
     }
 
