@@ -40,10 +40,15 @@ public class Configs {
             }
         }
         failed.add(config);
-        if (project.hasParent()) {
+        if (hasLocalParent(project)) {
             return resolveRecursively(configPath, project.getParent(), log, failed);
         }
         return Optional.empty();
+    }
+
+    private static boolean hasLocalParent(final MavenProject project) {
+        final MavenProject parent = project.getParent();
+        return parent != null && parent.getBasedir() != null;
     }
 
 }

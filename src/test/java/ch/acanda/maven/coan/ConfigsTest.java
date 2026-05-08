@@ -11,6 +11,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class ConfigsTest {
 
@@ -31,11 +32,23 @@ class ConfigsTest {
         final RecordingLog log = new RecordingLog();
         final MavenProject parent = createProject(tempDir.resolve("parent"));
         final Path projectBaseDir = tempDir.resolve("project");
-        final MavenProject project = createProject(tempDir.resolve("project"));
+        final MavenProject project = createProject(projectBaseDir);
         final Path configPath = createConfigFile(projectBaseDir, "config", "abc.json");
         project.setParent(parent);
         final Path path = Configs.resolve("ABC", "config/abc.json", project, log);
         assertThat(path).isReadable().isAbsolute().isEqualTo(configPath.toAbsolutePath());
+    }
+
+    @Test
+    void missingConfigInProjectWithNonLocalParentProject(@TempDir final Path tempDir) throws IOException {
+        final RecordingLog log = new RecordingLog();
+        final Path projectBaseDir = tempDir.resolve("project");
+        final MavenProject project = createProject(projectBaseDir);
+        project.setParent(createNonLocalProject("parent"));
+        final String configPath = projectBaseDir.resolve("config").resolve("abc.json").toString();
+        assertThatThrownBy(() -> Configs.resolve("ABC", "config/abc.json", project, log))
+            .isInstanceOf(MojoFailureException.class)
+            .hasMessageContaining("Unable to find ABC configuration at the following paths:\n  " + configPath);
     }
 
     private static MavenProject createProject(final Path baseDir) throws IOException {
@@ -43,6 +56,18 @@ class ConfigsTest {
         final MavenProject project = new MavenProject();
         project.setFile(baseDir.resolve("pom.xml").toFile());
         project.setArtifactId(baseDir.getFileName().toString());
+        return project;
+    }
+
+    /**
+     * A non-local project is fetched from a repository and does neither have a
+     * local pom.xml file nor a basedir. E.g. Spring Boot applications usually
+     * have a non-local parent pom (sprin-boot-starter-parent).
+     */
+    private static MavenProject createNonLocalProject(final String artifactId) {
+        final MavenProject project = new MavenProject();
+        project.setFile(null);
+        project.setArtifactId(artifactId);
         return project;
     }
 
