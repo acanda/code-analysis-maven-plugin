@@ -1,4 +1,4 @@
-name: Maven Build
+name: Build
 
 on:
   push:
@@ -7,7 +7,7 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 180
+    timeout-minutes: 10
 
     steps:
       - uses: actions/checkout@v7
@@ -19,24 +19,5 @@ jobs:
           java-version: 21
           distribution: 'temurin'
           cache: 'maven'
-      - name: Set up OWASP database cache key and restore keys
-        run: |
-          echo "YEAR=$(date -u +'%Y')" >> "$GITHUB_ENV"
-          echo "MONTH=$(date -u +'%Y-%m')" >> "$GITHUB_ENV"
-          echo "DAY=$(date -u +'%Y-%m-%d')" >> "$GITHUB_ENV"
-          echo "HOUR=$(date -u +'%Y-%m-%d-%H')" >> "$GITHUB_ENV"
-      - name: Cache OWASP database
-        uses: actions/cache@v6
-        with:
-          path: target/owasp/data
-          key: owasp-data-${{ env.HOUR }}
-          restore-keys: |
-            owasp-data-${{ env.DAY }}
-            owasp-data-${{ env.MONTH }}
-            owasp-data-${{ env.YEAR }}
-            owasp-data-
-            owasp-data
-      - name: Build with Maven
-        env:
-          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+      - name: Build
         run: ./mvnw -B verify --file pom.xml

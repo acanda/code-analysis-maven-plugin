@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>ch.acanda.maven</groupId>
@@ -173,13 +174,12 @@
           <groupId>org.owasp</groupId>
           <artifactId>dependency-check-maven</artifactId>
           <version>12.2.2</version>
-          <executions>
-            <execution>
-              <goals>
-                <goal>check</goal>
-              </goals>
-            </execution>
-          </executions>
+          <configuration>
+            <!--<failBuildOnCVSS>0</failBuildOnCVSS>-->
+            <formats>SARIF,HTML</formats>
+            <!-- Retries have no backoff: https://github.com/dependency-check/DependencyCheck/issues/8469 -->
+            <nvdApiDelay>1500</nvdApiDelay>
+          </configuration>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -326,8 +326,15 @@
           <plugin>
             <groupId>org.owasp</groupId>
             <artifactId>dependency-check-maven</artifactId>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>check</goal>
+                </goals>
+              </execution>
+            </executions>
             <configuration>
-              <nvdApiKey>${env.NVD_API_KEY}</nvdApiKey>
+              <nvdApiKeyEnvironmentVariable>NVD_API_KEY</nvdApiKeyEnvironmentVariable>
             </configuration>
           </plugin>
         </plugins>
