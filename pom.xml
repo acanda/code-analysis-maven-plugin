@@ -181,6 +181,8 @@
           <configuration>
             <!--<failBuildOnCVSS>0</failBuildOnCVSS>-->
             <formats>SARIF,HTML</formats>
+            <suppressionFile>config/dependency-check-suppressions.xml</suppressionFile>
+            <failBuildOnUnusedSuppressionRule>true</failBuildOnUnusedSuppressionRule>
             <!-- Retries have no backoff: https://github.com/dependency-check/DependencyCheck/issues/8469 -->
             <nvdApiDelay>1500</nvdApiDelay>
           </configuration>
