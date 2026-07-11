@@ -68,6 +68,25 @@
       <groupId>com.puppycrawl.tools</groupId>
       <artifactId>checkstyle</artifactId>
       <version>${checkstyle.version}</version>
+      <exclusions>
+        <!--
+          doxia-core is not needed by this plugin. It is excluded because of
+          vulnerabilities in httpcore 4.x (CVE-2026-54399, CVE-2026-54428).
+        -->
+        <exclusion>
+          <groupId>org.apache.maven.doxia</groupId>
+          <artifactId>doxia-core</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <!--
+      commons-logging is used but not declared by Checkstyle. It is a dependency
+      of doxia-core that Checkstyle uses directly.
+     -->
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+      <version>1.4.0</version>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
@@ -179,7 +198,7 @@
           <artifactId>dependency-check-maven</artifactId>
           <version>12.2.2</version>
           <configuration>
-            <!--<failBuildOnCVSS>0</failBuildOnCVSS>-->
+            <failBuildOnCVSS>0</failBuildOnCVSS>
             <formats>SARIF,HTML</formats>
             <suppressionFile>config/dependency-check-suppressions.xml</suppressionFile>
             <failBuildOnUnusedSuppressionRule>true</failBuildOnUnusedSuppressionRule>
