@@ -3,7 +3,7 @@
               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
               xsi:schemaLocation="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.4.xsd
                                   https://dependency-check.github.io/DependencyCheck/dependency-suppression.1.4.xsd">
-  <suppress until="2026-08-01">
+  <suppress until="2026-10-01">
     <notes><![CDATA[
       Will be fixed in kotlin-stdlib 2.4.20 which is not yet available.
     ]]></notes>
