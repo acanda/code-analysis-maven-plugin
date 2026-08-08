@@ -6,8 +6,8 @@
   "customManagers": [
     {
       "customType": "regex",
-      "fileMatch": [
-        ".github/workflows/sonar.yml"
+      "managerFilePatterns": [
+        "/\\.github/workflows/sonar\\.yml/"
       ],
       "matchStrings": [
         "org.sonarsource.scanner.maven:sonar-maven-plugin:(?<currentValue>\\d+(\\.\\d+)*?):sonar"
