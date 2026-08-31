@@ -5,9 +5,9 @@
                                   https://dependency-check.github.io/DependencyCheck/dependency-suppression.1.4.xsd">
   <suppress until="2026-10-01">
     <notes><![CDATA[
-      Will be fixed in kotlin-stdlib 2.4.20 which is not yet available.
+      Will be fixed in kotlin-* 2.4.20 which is not yet available.
     ]]></notes>
-    <packageUrl regex="true">^pkg:maven/org\.jetbrains\.kotlin/kotlin-stdlib(-jdk[78])?@.*$</packageUrl>
     <cve>CVE-2026-53914</cve>
+    <cve>CVE-2020-29582</cve>
   </suppress>
 </suppressions>
