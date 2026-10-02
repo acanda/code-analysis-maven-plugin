@@ -22,6 +22,7 @@
     <itf.version>0.13.1</itf.version>
     <checkstyle.version>14.3.0</checkstyle.version>
     <pmd.version>7.27.0</pmd.version>
+    <kotlin.version>2.4.20</kotlin.version>
     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     <sonar.organization>acanda</sonar.organization>
     <sonar.projectKey>acanda_code-analysis-maven-plugin</sonar.projectKey>
@@ -68,7 +69,32 @@
           <groupId>org.scala-lang.modules</groupId>
           <artifactId>scala-collection-compat_2.13</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
       </exclusions>
+    </dependency>
+    <!--
+      pmd-kotlin and pmd-apex have dependencies on older kotlin libraries that
+      have vulnerabilities. Once pmd-kotlin and pmd-apex are updated to use
+      version 2.4.20 of the kotlin libraries, the exclusions above and the
+      dependencies below can be removed.
+    -->
+    <dependency>
+      <groupId>org.jetbrains.kotlin</groupId>
+      <artifactId>kotlin-compiler-embeddable</artifactId>
+      <version>${kotlin.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jetbrains.kotlin</groupId>
+      <artifactId>kotlin-scripting-compiler-embeddable</artifactId>
+      <version>${kotlin.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jetbrains.kotlin</groupId>
+      <artifactId>kotlin-reflect</artifactId>
+      <version>${kotlin.version}</version>
     </dependency>
     <dependency>
       <groupId>com.puppycrawl.tools</groupId>
