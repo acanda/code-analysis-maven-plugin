@@ -6,3 +6,4 @@
 target/
 release.properties
 *.releaseBackup
+.DS_Store
