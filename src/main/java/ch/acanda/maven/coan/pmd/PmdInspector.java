@@ -105,6 +105,10 @@ public class PmdInspector {
         configuration.setAnalysisCacheLocation(targetPath.resolve("pmd.cache").toString());
         configuration.addInputPath(Paths.get(config.project().getBuild().getSourceDirectory()));
         configuration.addInputPath(Paths.get(config.project().getBuild().getTestSourceDirectory()));
+        final Path runtimeJar = getRuntimeJar();
+        if (runtimeJar != null) {
+            configuration.prependAuxClasspath(runtimeJar.toString());
+        }
         try {
             final String classpath = String.join(File.pathSeparator, config.project().getTestClasspathElements());
             configuration.prependAuxClasspath(classpath);
@@ -113,5 +117,21 @@ public class PmdInspector {
         }
         return configuration;
     }
+
+    private static Path getRuntimeJar() {
+        final String javaHome = System.getProperty("java.home");
+        // Java 9 and later
+        final Path jrtFsJar = Paths.get(javaHome, "lib", "jrt-fs.jar");
+        if (Files.isRegularFile(jrtFsJar)) {
+            return jrtFsJar;
+        }
+        // Java before 9
+        final Path rtJar = Paths.get(javaHome, "lib", "rt.jar");
+        if (Files.isRegularFile(rtJar)) {
+            return rtJar;
+        }
+        return null;
+    }
+
 
 }
