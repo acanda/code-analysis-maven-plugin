@@ -21,6 +21,7 @@
     <exclude name="CallSuperInConstructor"/>
     <exclude name="ClassNamingConventions"/>
     <exclude name="CommentDefaultAccessModifier"/>
+    <exclude name="LocalVariableDeclarationShouldBeAtStartOfBlock"/>
     <exclude name="LongVariable"/>
     <exclude name="OnlyOneReturn"/>
     <exclude name="ShortMethodName"/>
