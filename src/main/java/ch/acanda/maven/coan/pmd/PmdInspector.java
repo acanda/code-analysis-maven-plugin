@@ -133,5 +133,4 @@ public class PmdInspector {
         return null;
     }
 
-
 }
